@@ -1,7 +1,6 @@
 package Brownie;
 
 use 5.008_001;
-use Mouse;
 
 our $VERSION = '0.01';
 
@@ -25,7 +24,25 @@ Brownie is browser integrtion framework. It is inspired by Capybara at Ruby.
 
 =over 4
 
-=item visit( $path )
+=item visit( $url_or_path )
+
+=item current_url
+
+=item current_path
+
+=back
+
+=head2 Pages
+
+=over 4
+
+=item title
+
+=item source
+
+=item body
+
+=item screenshot( $file_name_to_save )
 
 =back
 
@@ -69,15 +86,7 @@ NOT YET
 
 =over 4
 
-=item execute_script( $javascript_code_string )
-
-=back
-
-=head2 Utilities
-
-=over 4
-
-=item screenshot( $file_name_to_save )
+=item execute_script( $javascript_code_string, @javascript_args )
 
 =back
 
