@@ -20,6 +20,7 @@
 ^tools/
 ^inc/
 ^author/
+^MYMETA\.
 \.cvsignore
 \.gitignore
 \.shipit
