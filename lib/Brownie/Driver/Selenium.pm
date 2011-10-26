@@ -37,26 +37,18 @@ sub visit {
     browser->get($url);
 }
 
-sub current_url {
-    return URI->new(browser->get_current_url);
-}
-
-sub current_path {
-    return current_url->path;
-}
+sub current_url  { return URI->new(browser->get_current_url) }
+sub current_path { return current_url->path }
 
 =head2 Pages
 
 =cut
 
-sub title {
-    return browser->get_title;
-}
+sub title { return browser->get_title }
 
-sub source {
-    return browser->get_page_source;
-}
-*body = \&source;
+sub source { return browser->get_page_source }
+sub body   { return browser->get_page_source }
+sub html   { return browser->get_page_source }
 
 sub screenshot {
     my ($self, $file) = @_;
