@@ -5,10 +5,12 @@ use Selenium::Remote::Driver;
 use URI;
 use File::Slurp 'write_file';
 use MIME::Base64 'decode_base64';
+use HTML::Selector::XPath 'selector_to_xpath';
 
 with qw(
     Brownie::Driver::Role::Navigation
     Brownie::Driver::Role::Pages
+    Brownie::Driver::Role::Clickable
 );
 
 our $Browser;
@@ -30,6 +32,8 @@ END {
 
 =head2 Navigation
 
+visit, current_url, current_path
+
 =cut
 
 sub visit {
@@ -41,6 +45,8 @@ sub current_url  { return URI->new(browser->get_current_url) }
 sub current_path { return current_url->path }
 
 =head2 Pages
+
+title, source/body/html, screenshot
 
 =cut
 
@@ -58,9 +64,46 @@ sub screenshot {
 
 =head2 Links and Buttons
 
+click_link, click_button, click_on
+
 =cut
 
+sub _find_and_click {
+    my ($self, $xpath) = @_;
+    local $@;
+    eval {
+        my $element = browser->find_element($xpath);
+        $element->click;
+    };
+    return $@ ? 0 : 1;
+}
+
+sub click_link {
+    my ($self, $locator) = @_;
+
+    my @xpath;
+    # taken from Web::Scraper
+    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
+    push @xpath, (
+        "//a[text()='$locator']",
+        "//a[\@title='$locator']",
+        "//a//img[\@alt='$locator']"
+    );
+
+    for my $xpath (@xpath) {
+        return if $self->_find_and_click($xpath);
+    }
+}
+
+sub click_button {
+}
+
+sub click_on {
+}
+
 =head2 Forms
+
+fill_in, choose, check, uncheck, select, attach_file
 
 =cut
 
@@ -73,6 +116,14 @@ sub screenshot {
 =cut
 
 =head2 Scripting
+
+execute_script
+
+=cut
+
+=head1 SEE ALSO
+
+L<Selenium::Remote::Driver>
 
 =cut
 
