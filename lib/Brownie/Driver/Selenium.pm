@@ -106,6 +106,10 @@ sub click_button {
     push @xpath, (
         "//input[$types and \@value='$locator']",
         "//input[$types and \@title='$locator']",
+        "//button[\@value='$locator']",
+        "//button[\@title='$locator']",
+        "//button[text()='$locator']",
+        "//input[\@type='image' and \@alt='$locator']",
     );
 
     for my $xpath (@xpath) {
@@ -115,6 +119,8 @@ sub click_button {
 }
 
 sub click_on {
+    my ($self, $locator) = @_;
+    return $self->click_link($locator) || $self->click_button($locator);
 }
 
 =head2 Forms

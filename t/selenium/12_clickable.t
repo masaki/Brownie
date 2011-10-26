@@ -24,11 +24,11 @@ my $server = start_http_server {
       <a href="/link_img"><img src="" alt="ImgAlt Link"/></a>
     </p>
     <form action="/form">
-      <input type="submit" id="input_submit" title="Input Submit Title" value="Input Submit Value" />
+      <input type="submit" id="input_submit" title="Input Submit Title" value="Input Submit Value"/>
       <input type="button" id="input_button" title="Input Button Title" value="Input Button Value" onclick="javascript:location.href='/js'"/>
       <input type="image" id="input_image" title="Input Image Title" alt="Input Image Alt"/>
       <button type="submit" id="button_submit" title="Button Submit Title" value="Button Submit Value">Button Submit</button>
-      <button type="button" id="button_button" title="Button Button Title" value="Button Button Value" onclick="javascript:location.href='/js'">Button Button</button>
+      <button type="button" id="button_button" title="Button Button Title" value="Button Button Value" onclick="javascript:location.href='/js';return false">Button Button</button>
     </form>
   </body>
 </html>
@@ -90,20 +90,41 @@ describe 'Brownie::Driver::Selenium#click_button' => sub {
 
     it 'should click button with "//xpath" locator' => sub {
         should_click_button_and_go('//input[1]', '/form');
-        should_click_button_and_go('//input[3]', '/js');
+        should_click_button_and_go('//input[2]', '/js');
     };
 
-=comment
-    it 'should click link with "a[text()]" locator' => sub {
-        should_click_link_and_go_to_next_page('Text Link', '/link_text');
+    it 'should click button with "input[@title]" locator' => sub {
+        should_click_button_and_go('Input Submit Title', '/form');
     };
-    it 'should click link with "a[@title]" locator' => sub {
-        should_click_link_and_go_to_next_page('Title Link', '/link_title');
+    it 'should click button with "input[@value]" locator' => sub {
+        should_click_button_and_go('Input Submit Value', '/form');
     };
-    it 'should click link with "a/img[@alt]" locator' => sub {
-        should_click_link_and_go_to_next_page('ImgAlt Link', '/link_img');
+    it 'should click button with "button[@title]" locator' => sub {
+        should_click_button_and_go('Button Submit Title', '/form');
     };
-=cut
+    it 'should click button with "button[@value]" locator' => sub {
+        should_click_button_and_go('Button Submit Value', '/form');
+    };
+    it 'should click button with "button[text()]" locator' => sub {
+        should_click_button_and_go('Button Submit', '/form');
+    };
+};
+
+describe 'Brownie::Driver::Selenium#click_on' => sub {
+    sub should_click_and_go {
+        my ($locator, $path) = @_;
+        $driver->visit($url);
+        $driver->click_on($locator);
+        is $driver->current_path => $path;
+    }
+
+    it 'should click link' => sub {
+        should_click_and_go('#link_id', '/link_id');
+    };
+
+    it 'should click button' => sub {
+        should_click_and_go('Input Submit Title', '/form');
+    };
 };
 
 done_testing;
