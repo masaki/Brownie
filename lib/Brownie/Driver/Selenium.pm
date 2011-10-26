@@ -91,11 +91,27 @@ sub click_link {
     );
 
     for my $xpath (@xpath) {
-        return if $self->_find_and_click($xpath);
+        return 1 if $self->_find_and_click($xpath);
     }
+    return;
 }
 
 sub click_button {
+    my ($self, $locator) = @_;
+
+    my @xpath;
+    # taken from Web::Scraper
+    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
+    my $types = q/(@type='submit' or @type='button' or @type='image')/;
+    push @xpath, (
+        "//input[$types and \@value='$locator']",
+        "//input[$types and \@title='$locator']",
+    );
+
+    for my $xpath (@xpath) {
+        return 1 if $self->_find_and_click($xpath);
+    }
+    return;
 }
 
 sub click_on {

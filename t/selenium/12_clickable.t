@@ -15,20 +15,22 @@ my $server = start_http_server {
     my $res = HTTP::Response->new(200);
     $res->content(<<'EOF');
 <html>
-<body>
-<p>
-<a href="/link_id" id="link_id">Link</a>
-<a href="/link_xpath">Link</a>
-<a href="/link_text">Text Link</a>
-<a href="/link_title" title="Title Link">Link</a>
-<a href="/link_img"><img src="" alt="ImgAlt Link"/></a>
-</p>
-<form action="/form">
-<input type="submit"/>
-<input type="submit"/>
-<input type="submit"/>
-</form>
-</body>
+  <body>
+    <p>
+      <a href="/link_id" id="link_id">Link</a>
+      <a href="/link_xpath">Link</a>
+      <a href="/link_text">Text Link</a>
+      <a href="/link_title" title="Title Link">Link</a>
+      <a href="/link_img"><img src="" alt="ImgAlt Link"/></a>
+    </p>
+    <form action="/form">
+      <input type="submit" id="input_submit" title="Input Submit Title" value="Input Submit Value" />
+      <input type="button" id="input_button" title="Input Button Title" value="Input Button Value" onclick="javascript:location.href='/js'"/>
+      <input type="image" id="input_image" title="Input Image Title" alt="Input Image Alt"/>
+      <button type="submit" id="button_submit" title="Button Submit Title" value="Button Submit Value">Button Submit</button>
+      <button type="button" id="button_button" title="Button Button Title" value="Button Button Value" onclick="javascript:location.href='/js'">Button Button</button>
+    </form>
+  </body>
 </html>
 EOF
     return $res;
@@ -36,20 +38,62 @@ EOF
 my $url = sprintf 'http://127.0.0.1:%d/', $server->port;
 
 describe 'Brownie::Driver::Selenium#click_link' => sub {
-    sub should_click_link_and_go_to_next_page {
+    sub should_click_link_and_go {
         my ($locator, $path) = @_;
         $driver->visit($url);
         $driver->click_link($locator);
         is $driver->current_path => $path;
     }
 
-    it 'should click link with "#id" locator' => sub {
-        should_click_link_and_go_to_next_page('#link_id', '/link_id');
+    it 'should click button with "#id" locator' => sub {
+        should_click_link_and_go('#link_id', '/link_id');
     };
+
     it 'should click link with "//xpath" locator' => sub {
-        should_click_link_and_go_to_next_page('//a[2]', '/link_xpath');
-        should_click_link_and_go_to_next_page('//a[@href="/link_xpath"]', '/link_xpath');
+        should_click_link_and_go('//a[2]', '/link_xpath');
+        should_click_link_and_go('//a[@href="/link_xpath"]', '/link_xpath');
     };
+
+    it 'should click link with "a[text()]" locator' => sub {
+        should_click_link_and_go('Text Link', '/link_text');
+    };
+
+    it 'should click link with "a[@title]" locator' => sub {
+        should_click_link_and_go('Title Link', '/link_title');
+    };
+
+    it 'should click link with "a/img[@alt]" locator' => sub {
+        should_click_link_and_go('ImgAlt Link', '/link_img');
+    };
+};
+
+describe 'Brownie::Driver::Selenium#click_button' => sub {
+    sub should_click_button_and_go {
+        my ($locator, $path) = @_;
+        $driver->visit($url);
+        $driver->click_button($locator);
+        is $driver->current_path => $path;
+    }
+
+    it 'should click button with "#id" locator' => sub {
+        my %map = (
+            '#input_submit'  => '/form',
+            '#input_button'  => '/js',
+            '#input_image'   => '/form',
+            '#button_submit' => '/form',
+            '#button_button' => '/js',
+        );
+        for my $id (keys %map) {
+            should_click_button_and_go($id, $map{$id});
+        }
+    };
+
+    it 'should click button with "//xpath" locator' => sub {
+        should_click_button_and_go('//input[1]', '/form');
+        should_click_button_and_go('//input[3]', '/js');
+    };
+
+=comment
     it 'should click link with "a[text()]" locator' => sub {
         should_click_link_and_go_to_next_page('Text Link', '/link_text');
     };
@@ -59,6 +103,7 @@ describe 'Brownie::Driver::Selenium#click_link' => sub {
     it 'should click link with "a/img[@alt]" locator' => sub {
         should_click_link_and_go_to_next_page('ImgAlt Link', '/link_img');
     };
+=cut
 };
 
 done_testing;
