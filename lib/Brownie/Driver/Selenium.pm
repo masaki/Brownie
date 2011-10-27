@@ -64,11 +64,25 @@ Go to $url.
 
   $driver->visit('http://example.com/');
 
+=cut
+
+sub visit {
+    my ($self, $url) = @_;
+    $self->browser->get($url);
+}
+
 =item * C<current_url>
 
 Returns current page's URL.
 
   my $url = $driver->current_url;
+
+=cut
+
+sub current_url {
+    my $self = shift;
+    return URI->new($self->browser->get_current_url);
+}
 
 =item * C<current_path>
 
@@ -79,16 +93,6 @@ Returns current page's path of URL.
 =back
 
 =cut
-
-sub visit {
-    my ($self, $url) = @_;
-    $self->browser->get($url);
-}
-
-sub current_url {
-    my $self = shift;
-    return URI->new($self->browser->get_current_url);
-}
 
 sub current_path {
     my $self = shift;
@@ -105,11 +109,25 @@ Returns current page's <title> text.
 
   my $title = $driver->title;
 
+=cut
+
+sub title {
+    my $self = shift;
+    return $self->browser->get_title;
+}
+
 =item * C<source>
 
 Returns current page's HTML source.
 
   my $source = $driver->source;
+
+=cut
+
+sub source {
+    my $self = shift;
+    return $self->browser->get_page_source;
+}
 
 =item * C<screenshot($filename)>
 
@@ -120,16 +138,6 @@ Takes current page's screenshot and saves to $filename as PNG.
 =back
 
 =cut
-
-sub title {
-    my $self = shift;
-    return $self->browser->get_title;
-}
-
-sub source {
-    my $self = shift;
-    return $self->browser->get_page_source;
-}
 
 sub screenshot {
     my ($self, $file) = @_;
@@ -169,6 +177,26 @@ C<$locator> are:
 
 =back
 
+=cut
+
+sub click_link {
+    my ($self, $locator) = @_;
+
+    my @xpath;
+    # taken from Web::Scraper
+    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
+    push @xpath, (
+        "//a[text()='$locator']",
+        "//a[\@title='$locator']",
+        "//a//img[\@alt='$locator']"
+    );
+
+    for my $xpath (@xpath) {
+        return 1 if $self->_find_and_click($xpath);
+    }
+    return;
+}
+
 =item * C<click_button($locator)>
 
 Finds and clicks specified buttons.
@@ -201,35 +229,7 @@ C<$locator> are:
 
 =back
 
-=item * C<click_on($locator)>
-
-Finds and clicks specified links or buttons.
-
-  $driver->click_on($locator);
-
-It combines C<click_link> and C<click_button>.
-
-=back
-
 =cut
-
-sub click_link {
-    my ($self, $locator) = @_;
-
-    my @xpath;
-    # taken from Web::Scraper
-    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
-    push @xpath, (
-        "//a[text()='$locator']",
-        "//a[\@title='$locator']",
-        "//a//img[\@alt='$locator']"
-    );
-
-    for my $xpath (@xpath) {
-        return 1 if $self->_find_and_click($xpath);
-    }
-    return;
-}
 
 sub click_button {
     my ($self, $locator) = @_;
@@ -253,6 +253,18 @@ sub click_button {
     return;
 }
 
+=item * C<click_on($locator)>
+
+Finds and clicks specified links or buttons.
+
+  $driver->click_on($locator);
+
+It combines C<click_link> and C<click_button>.
+
+=back
+
+=cut
+
 sub click_on {
     my ($self, $locator) = @_;
     return $self->click_link($locator) || $self->click_button($locator);
@@ -274,13 +286,23 @@ sub _find_and_click {
 
 =item * C<fill_in>
 
+=cut
+
 =item * C<choose>
+
+=cut
 
 =item * C<check>
 
+=cut
+
 =item * C<uncheck>
 
+=cut
+
 =item * C<select>
+
+=cut
 
 =item * C<attach_file>
 
@@ -292,13 +314,9 @@ sub _find_and_click {
 
 NOT YET
 
-=cut
-
 =head2 Finder
 
 NOT YET
-
-=cut
 
 =head2 Scripting
 
