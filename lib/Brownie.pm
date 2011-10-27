@@ -1,6 +1,6 @@
 package Brownie;
 
-use 5.008_001;
+use 5.008001;
 
 our $VERSION = '0.01';
 
@@ -39,8 +39,6 @@ Brownie is browser integrtion framework. It is inspired by Capybara at Ruby.
 =item title
 
 =item source
-
-=item body
 
 =item screenshot( $file_name_to_save )
 
@@ -100,5 +98,9 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =head1 SEE ALSO
+
+Capybara
+
+L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 
 =cut

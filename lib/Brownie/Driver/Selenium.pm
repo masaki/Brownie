@@ -38,27 +38,38 @@ visit, current_url, current_path
 
 sub visit {
     my ($self, $url) = @_;
-    browser->get($url);
+    $self->browser->get($url);
 }
 
-sub current_url  { return URI->new(browser->get_current_url) }
-sub current_path { return current_url->path }
+sub current_url {
+    my $self = shift;
+    return URI->new($self->browser->get_current_url);
+}
+
+sub current_path {
+    my $self = shift;
+    return $self->current_url->path;
+}
 
 =head2 Pages
 
-title, source/body/html, screenshot
+title, source, screenshot
 
 =cut
 
-sub title { return browser->get_title }
+sub title {
+    my $self = shift;
+    return $self->browser->get_title;
+}
 
-sub source { return browser->get_page_source }
-sub body   { return browser->get_page_source }
-sub html   { return browser->get_page_source }
+sub source {
+    my $self = shift;
+    return $self->browser->get_page_source;
+}
 
 sub screenshot {
     my ($self, $file) = @_;
-    my $image = decode_base64(browser->screenshot);
+    my $image = decode_base64($self->browser->screenshot);
     write_file($file, { binmode => ':raw' }, $image);
 }
 
@@ -72,7 +83,7 @@ sub _find_and_click {
     my ($self, $xpath) = @_;
     local $@;
     eval {
-        my $element = browser->find_element($xpath);
+        my $element = $self->browser->find_element($xpath);
         $element->click;
     };
     return $@ ? 0 : 1;

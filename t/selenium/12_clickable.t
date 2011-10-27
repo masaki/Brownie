@@ -1,19 +1,17 @@
 use Test::More;
 use Test::Flatten;
+use Test::Fake::HTTPD;
+
 BEGIN {
     *describe = *context = *it = \&subtest;
 }
 
 use Brownie::Driver::Selenium;
-use t::lib::httpd_helper;
-use HTTP::Response;
 
 my $driver = Brownie::Driver::Selenium->new;
 
-my $server = start_http_server {
-    my $req = shift;
-    my $res = HTTP::Response->new(200);
-    $res->content(<<'EOF');
+my $httpd = run_http_server {
+    my $content = <<'EOF';
 <html>
   <body>
     <p>
@@ -33,9 +31,11 @@ my $server = start_http_server {
   </body>
 </html>
 EOF
-    return $res;
+
+    return [ 200, ['Content-Type', 'text/html;charset=utf-8'], [$content] ];
 };
-my $url = sprintf 'http://127.0.0.1:%d/', $server->port;
+
+my $url = sprintf 'http://127.0.0.1:%d/', $httpd->port;
 
 describe 'Brownie::Driver::Selenium#click_link' => sub {
     sub should_click_link_and_go {

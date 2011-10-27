@@ -32,8 +32,6 @@ Brownie is browser integrtion framework. It is inspired by Capybara at Ruby.
 
 =item source
 
-=item body
-
 =item screenshot( $file_name_to_save )
 
 =back
@@ -92,6 +90,10 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =head1 SEE ALSO
+
+Capybara
+
+L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 
 
 =cut

@@ -5,7 +5,6 @@ use Any::Moose 'Role';
 requires qw(
     title
     source
-    body
     screenshot
 );
 
