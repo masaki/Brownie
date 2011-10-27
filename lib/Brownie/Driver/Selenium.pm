@@ -13,10 +13,34 @@ with qw(
     Brownie::Driver::Role::Clickable
 );
 
+=head1 NAME
+
+Brownie::Driver::Selenium
+
+=head1 METHODS
+
+=head2 Browser
+
+=over 4
+
+=item * C<browser>
+
+  my $browser = $driver->browser;
+
+You can set selenium-server parameters using C<%ENV>:
+
+  * SELENIUM_HOST:    selenium server host or address (default: 127.0.0.1)
+  * SELENIUM_PORT:    selenium server port            (default: 4444)
+  * SELENIUM_BROWSER: selenium server browser name    (default: "firefox")
+
+=back
+
+=cut
+
 our $Browser;
 sub browser {
     $Browser ||= Selenium::Remote::Driver->new(
-        remote_server_addr => $ENV{SELENIUM_HOST} || $ENV{SELENIUM_ADDR} || 'localhost',
+        remote_server_addr => $ENV{SELENIUM_HOST} || $ENV{SELENIUM_ADDR} || '127.0.0.1',
         port               => $ENV{SELENIUM_PORT} || 4444,
         browser_name       => $ENV{SELENIUM_BROWSER} || 'firefox',
     );
@@ -32,7 +56,27 @@ END {
 
 =head2 Navigation
 
-visit, current_url, current_path
+=over 4
+
+=item * C<visit($url)>
+
+Go to $url.
+
+  $driver->visit('http://example.com/');
+
+=item * C<current_url>
+
+Returns current page's URL.
+
+  my $url = $driver->current_url;
+
+=item * C<current_path>
+
+Returns current page's path of URL.
+
+  my $path = $driver->current_path;
+
+=back
 
 =cut
 
@@ -53,7 +97,27 @@ sub current_path {
 
 =head2 Pages
 
-title, source, screenshot
+=over 4
+
+=item * C<title>
+
+Returns current page's <title> text.
+
+  my $title = $driver->title;
+
+=item * C<source>
+
+Returns current page's HTML source.
+
+  my $source = $driver->source;
+
+=item * C<screenshot($filename)>
+
+Takes current page's screenshot and saves to $filename as PNG.
+
+  $driver->screenshot($filename);
+
+=back
 
 =cut
 
@@ -75,19 +139,79 @@ sub screenshot {
 
 =head2 Links and Buttons
 
-click_link, click_button, click_on
+=over 4
+
+=item * C<click_link($locator)>
+
+Finds and clicks specified links.
+
+  $driver->click_link($locator);
+
+C<$locator> are:
+
+=over 8
+
+=item * C<#id>
+
+=item * C<//xpath>
+
+=item * C<text() of E<lt>aE<gt>>
+
+(e.g.) <a href="...">{locator}</a>
+
+=item * C<@title of E<lt>aE<gt>>
+
+(e.g.) <a title="{locator}">...</a>
+
+=item * C<child E<lt>imgE<gt> @alt>
+
+(e.g.) <a><img alt="{locator}"/></a>
+
+=back
+
+=item * C<click_button($locator)>
+
+Finds and clicks specified buttons.
+
+  $driver->click_button($locator);
+
+C<$locator> are:
+
+=over 8
+
+=item * C<#id>
+
+=item * C<//xpath>
+
+=item * C<@value of E<lt>inputE<gt> / E<lt>buttonE<gt>>
+
+(e.g.) <input value="{locator}"/>
+
+=item * C<@title of E<lt>inputE<gt> / E<lt>buttonE<gt>>
+
+(e.g.) <button title="{locator}">...</button>
+
+=item * C<text() of E<lt>buttonE<gt>>
+
+(e.g.) <button>{locator}</button>
+
+=item * C<@alt of E<lt>input type="image"E<gt>>
+
+(e.g.) <input type="image" alt="{locator}"/>
+
+=back
+
+=item * C<click_on($locator)>
+
+Finds and clicks specified links or buttons.
+
+  $driver->click_on($locator);
+
+It combines C<click_link> and C<click_button>.
+
+=back
 
 =cut
-
-sub _find_and_click {
-    my ($self, $xpath) = @_;
-    local $@;
-    eval {
-        my $element = $self->browser->find_element($xpath);
-        $element->click;
-    };
-    return $@ ? 0 : 1;
-}
 
 sub click_link {
     my ($self, $locator) = @_;
@@ -134,23 +258,55 @@ sub click_on {
     return $self->click_link($locator) || $self->click_button($locator);
 }
 
+sub _find_and_click {
+    my ($self, $xpath) = @_;
+    local $@;
+    eval {
+        my $element = $self->browser->find_element($xpath);
+        $element->click;
+    };
+    return $@ ? 0 : 1;
+}
+
 =head2 Forms
 
-fill_in, choose, check, uncheck, select, attach_file
+=over 4
+
+=item * C<fill_in>
+
+=item * C<choose>
+
+=item * C<check>
+
+=item * C<uncheck>
+
+=item * C<select>
+
+=item * C<attach_file>
+
+=back
 
 =cut
 
 =head2 Matchers
 
+NOT YET
+
 =cut
 
 =head2 Finder
+
+NOT YET
 
 =cut
 
 =head2 Scripting
 
-execute_script
+=over 4
+
+=item * C<execute_script>
+
+=back
 
 =cut
 
