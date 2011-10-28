@@ -213,11 +213,25 @@ NOT YET
 
 =item * C<execute_script($javascript)>
 
+Executes snippet of JavaScript into current page.
+
+  $driver->execute_script('$("body").empty()');
+
+=item * C<evaluate_script($javascript)>
+
+Executes snipptes and returns result.
+
+  my $result = $driver->evaluate_script('1 + 2');
+
+If specified DOM element, it returns WebElement object.
+
+  my $node = $driver->evaluate_script('document.getElementById("foo")');
+
 =back
 
 =cut
 
-*execute_script = \&__not_implemented;
+*execute_script = *evaluate_script = \&__not_implemented;
 
 =head1 SEE ALSO
 

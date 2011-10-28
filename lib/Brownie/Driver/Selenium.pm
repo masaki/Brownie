@@ -189,6 +189,8 @@ NOT YET
 
 =item * C<execute_script($javascript)>
 
+=item * C<evaluate_script($javascript)>
+
 =back
 
 =cut
@@ -216,7 +218,7 @@ sub DESTROY {
 
 sub visit {
     my ($self, $url) = @_;
-    $self->browser->get($url);
+    $self->browser->get("$url"); # stringify for URI
 }
 
 sub current_url {
@@ -298,6 +300,35 @@ sub _find_and_click {
         $element->click;
     };
     return $@ ? 0 : 1;
+}
+
+sub fill_in {
+}
+
+sub choose {
+}
+
+sub check {
+}
+
+sub uncheck {
+}
+
+sub select {
+}
+
+sub attach_file {
+}
+
+sub execute_script {
+    my ($self, $script) = @_;
+    $self->browser->execute_script($script);
+}
+
+sub evaluate_script {
+    my ($self, $script) = @_;
+    # TODO: Brownie::Node-ify
+    return $self->browser->execute_script("return $script");
 }
 
 =head1 SEE ALSO
