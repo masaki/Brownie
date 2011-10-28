@@ -11,19 +11,27 @@ use HTML::Selector::XPath 'selector_to_xpath';
 
 =head1 NAME
 
-Brownie::Driver::Selenium
+Brownie::Driver::Selenium - Selenium WebDriver bridge implementation
+
+=head1 DESCRIPTION
+
+Please see L<Brownie::Driver::Base> document.
 
 =head1 METHODS
 
-=head2 Browser
-
 =over 4
 
-=item * C<browser>
+=item * C<new( %args )>
 
-  my $browser = $driver->browser;
+  my $driver = Brownie::Driver::Selenium->new(%args);
 
-You can set selenium-server parameters using C<%ENV>:
+C<%args> are:
+
+  * selenium_host:    selenium server host or address (default: 127.0.0.1)
+  * selenium_port:    selenium server port            (default: 4444)
+  * selenium_browser: selenium server browser name    (default: "firefox")
+
+You can also set selenium-server parameters using C<%ENV>:
 
   * SELENIUM_HOST:    selenium server host or address (default: 127.0.0.1)
   * SELENIUM_PORT:    selenium server port            (default: 4444)
@@ -33,20 +41,46 @@ You can set selenium-server parameters using C<%ENV>:
 
 =cut
 
-our $Browser;
-sub browser {
-    $Browser ||= Selenium::Remote::Driver->new(
-        remote_server_addr => $ENV{SELENIUM_HOST} || $ENV{SELENIUM_ADDR} || '127.0.0.1',
-        port               => $ENV{SELENIUM_PORT} || 4444,
-        browser_name       => $ENV{SELENIUM_BROWSER} || 'firefox',
-    );
-    return $Browser;
+sub new {
+    my ($class, %args) = @_;
+
+    $args{selenium_host}    ||= ($ENV{SELENIUM_HOST}    || '127.0.0.1');
+    $args{selenium_port}    ||= ($ENV{SELENIUM_PORT}    || 4444);
+    $args{selenium_browser} ||= ($ENV{SELENIUM_BROWSER} || 'firefox');
+
+    return $class->SUPER::new(%args);
 }
 
-END {
-    if ($Browser) {
-        $Browser->quit;
-        undef $Browser;
+=head2 Browser
+
+=over 4
+
+=item * C<browser>
+
+  my $browser = $driver->browser;
+
+=back
+
+=cut
+
+sub browser {
+    my $self = shift;
+
+    $self->{browser} ||= Selenium::Remote::Driver->new(
+        remote_server_addr => $self->{selenium_host},
+        port               => $self->{selenium_port},
+        browser_name       => $self->{selenium_browser},
+    );
+
+    return $self->{browser};
+}
+
+sub DESTROY {
+    my $self = shift;
+
+    if ($self->{browser}) {
+        $self->{browser}->quit;
+        undef $self->{browser};
     }
 }
 
