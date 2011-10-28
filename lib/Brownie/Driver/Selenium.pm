@@ -57,32 +57,7 @@ sub new {
 
 =item * C<browser>
 
-  my $browser = $driver->browser;
-
 =back
-
-=cut
-
-sub browser {
-    my $self = shift;
-
-    $self->{browser} ||= Selenium::Remote::Driver->new(
-        remote_server_addr => $self->{selenium_host},
-        port               => $self->{selenium_port},
-        browser_name       => $self->{selenium_browser},
-    );
-
-    return $self->{browser};
-}
-
-sub DESTROY {
-    my $self = shift;
-
-    if ($self->{browser}) {
-        $self->{browser}->quit;
-        undef $self->{browser};
-    }
-}
 
 =head2 Navigation
 
@@ -90,44 +65,11 @@ sub DESTROY {
 
 =item * C<visit($url)>
 
-Go to $url.
-
-  $driver->visit('http://example.com/');
-
-=cut
-
-sub visit {
-    my ($self, $url) = @_;
-    $self->browser->get($url);
-}
-
 =item * C<current_url>
-
-Returns current page's URL.
-
-  my $url = $driver->current_url;
-
-=cut
-
-sub current_url {
-    my $self = shift;
-    return URI->new($self->browser->get_current_url);
-}
 
 =item * C<current_path>
 
-Returns current page's path of URL.
-
-  my $path = $driver->current_path;
-
 =back
-
-=cut
-
-sub current_path {
-    my $self = shift;
-    return $self->current_url->path;
-}
 
 =head2 Pages
 
@@ -135,45 +77,11 @@ sub current_path {
 
 =item * C<title>
 
-Returns current page's <title> text.
-
-  my $title = $driver->title;
-
-=cut
-
-sub title {
-    my $self = shift;
-    return $self->browser->get_title;
-}
-
 =item * C<source>
-
-Returns current page's HTML source.
-
-  my $source = $driver->source;
-
-=cut
-
-sub source {
-    my $self = shift;
-    return $self->browser->get_page_source;
-}
 
 =item * C<screenshot($filename)>
 
-Takes current page's screenshot and saves to $filename as PNG.
-
-  $driver->screenshot($filename);
-
 =back
-
-=cut
-
-sub screenshot {
-    my ($self, $file) = @_;
-    my $image = decode_base64($self->browser->screenshot);
-    write_file($file, { binmode => ':raw' }, $image);
-}
 
 =head2 Links and Buttons
 
@@ -207,26 +115,6 @@ C<$locator> are:
 
 =back
 
-=cut
-
-sub click_link {
-    my ($self, $locator) = @_;
-
-    my @xpath;
-    # taken from Web::Scraper
-    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
-    push @xpath, (
-        "//a[text()='$locator']",
-        "//a[\@title='$locator']",
-        "//a//img[\@alt='$locator']"
-    );
-
-    for my $xpath (@xpath) {
-        return 1 if $self->_find_and_click($xpath);
-    }
-    return;
-}
-
 =item * C<click_button($locator)>
 
 Finds and clicks specified buttons.
@@ -259,7 +147,121 @@ C<$locator> are:
 
 =back
 
+=item * C<click_on($locator)>
+
+Finds and clicks specified links or buttons.
+
+  $driver->click_on($locator);
+
+It combines C<click_link> and C<click_button>.
+
+=back
+
+=head2 Forms
+
+=over 4
+
+=item * C<fill_in($locator, -with => $value)>
+
+=item * C<choose($locator)>
+
+=item * C<check($locator)>
+
+=item * C<uncheck($locator)>
+
+=item * C<select($value, -from => $locator)>
+
+=item * C<attach_file($locator, $filename)>
+
+=back
+
+=head2 Matchers
+
+NOT YET
+
+=head2 Finder
+
+NOT YET
+
+=head2 Scripting
+
+=over 4
+
+=item * C<execute_script($javascript)>
+
+=back
+
 =cut
+
+sub browser {
+    my $self = shift;
+
+    $self->{browser} ||= Selenium::Remote::Driver->new(
+        remote_server_addr => $self->{selenium_host},
+        port               => $self->{selenium_port},
+        browser_name       => $self->{selenium_browser},
+    );
+
+    return $self->{browser};
+}
+
+sub DESTROY {
+    my $self = shift;
+
+    if ($self->{browser}) {
+        $self->{browser}->quit;
+        undef $self->{browser};
+    }
+}
+
+sub visit {
+    my ($self, $url) = @_;
+    $self->browser->get($url);
+}
+
+sub current_url {
+    my $self = shift;
+    return URI->new($self->browser->get_current_url);
+}
+
+sub current_path {
+    my $self = shift;
+    return $self->current_url->path;
+}
+
+sub title {
+    my $self = shift;
+    return $self->browser->get_title;
+}
+
+sub source {
+    my $self = shift;
+    return $self->browser->get_page_source;
+}
+
+sub screenshot {
+    my ($self, $file) = @_;
+    my $image = decode_base64($self->browser->screenshot);
+    write_file($file, { binmode => ':raw' }, $image);
+}
+
+sub click_link {
+    my ($self, $locator) = @_;
+
+    my @xpath;
+    # taken from Web::Scraper
+    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
+    push @xpath, (
+        "//a[text()='$locator']",
+        "//a[\@title='$locator']",
+        "//a//img[\@alt='$locator']"
+    );
+
+    for my $xpath (@xpath) {
+        return 1 if $self->_find_and_click($xpath);
+    }
+    return;
+}
 
 sub click_button {
     my ($self, $locator) = @_;
@@ -283,18 +285,6 @@ sub click_button {
     return;
 }
 
-=item * C<click_on($locator)>
-
-Finds and clicks specified links or buttons.
-
-  $driver->click_on($locator);
-
-It combines C<click_link> and C<click_button>.
-
-=back
-
-=cut
-
 sub click_on {
     my ($self, $locator) = @_;
     return $self->click_link($locator) || $self->click_button($locator);
@@ -309,54 +299,6 @@ sub _find_and_click {
     };
     return $@ ? 0 : 1;
 }
-
-=head2 Forms
-
-=over 4
-
-=item * C<fill_in>
-
-=cut
-
-=item * C<choose>
-
-=cut
-
-=item * C<check>
-
-=cut
-
-=item * C<uncheck>
-
-=cut
-
-=item * C<select>
-
-=cut
-
-=item * C<attach_file>
-
-=back
-
-=cut
-
-=head2 Matchers
-
-NOT YET
-
-=head2 Finder
-
-NOT YET
-
-=head2 Scripting
-
-=over 4
-
-=item * C<execute_script>
-
-=back
-
-=cut
 
 =head1 SEE ALSO
 

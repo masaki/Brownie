@@ -14,6 +14,12 @@ Brownie::Driver::Base - base class of Brownie::Driver series
 
 =head1 METHODS
 
+=over 4
+
+=item * C<new( %args )>
+
+=back
+
 =cut
 
 sub new {
@@ -175,17 +181,17 @@ It combines C<click_link> and C<click_button>.
 
 =over 4
 
-=item * C<fill_in>
+=item * C<fill_in($locator, -with => $value)>
 
-=item * C<choose>
+=item * C<choose($locator)>
 
-=item * C<check>
+=item * C<check($locator)>
 
-=item * C<uncheck>
+=item * C<uncheck($locator)>
 
-=item * C<select>
+=item * C<select($value, -from => $locator)>
 
-=item * C<attach_file>
+=item * C<attach_file($locator, $filename)>
 
 =back
 
@@ -205,7 +211,7 @@ NOT YET
 
 =over 4
 
-=item * C<execute_script>
+=item * C<execute_script($javascript)>
 
 =back
 
