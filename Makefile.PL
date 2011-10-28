@@ -1,8 +1,4 @@
 use inc::Module::Install;
-use Module::Install::AuthorTests;
-use Module::Install::Repository;
-use Module::Install::ReadmePodFromPod;
-use Module::Install::Any::Moose;
 
 name 'Brownie';
 license 'perl';
@@ -22,7 +18,7 @@ tests 't/*.t';
 test_requires 'Test::More' => 0.98;
 test_requires 'Test::UseAllModules';
 test_requires 'Test::Flatten';
-test_requires 'Test::Fake::HTTPD';
+test_requires 'Test::Fake::HTTPD' => 0.03;
 test_requires 'Test::Exception';
 test_requires 'Test::File';
 test_requires 'File::Temp';
