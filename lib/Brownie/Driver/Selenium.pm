@@ -1,17 +1,13 @@
 package Brownie::Driver::Selenium;
 
-use Any::Moose;
+use strict;
+use warnings;
+use parent 'Brownie::Driver::Base';
 use Selenium::Remote::Driver;
 use URI;
 use File::Slurp 'write_file';
 use MIME::Base64 'decode_base64';
 use HTML::Selector::XPath 'selector_to_xpath';
-
-with qw(
-    Brownie::Driver::Role::Navigation
-    Brownie::Driver::Role::Pages
-    Brownie::Driver::Role::Clickable
-);
 
 =head1 NAME
 

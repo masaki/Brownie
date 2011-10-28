@@ -4,14 +4,13 @@ name 'Brownie';
 license 'perl';
 all_from 'lib/Brownie.pm';
 
-requires_any_moose prefer => 'Mouse';
-
+requires 'parent';
 requires 'URI';
 requires 'HTML::Selector::XPath';
 requires 'File::Slurp';
 requires 'MIME::Base64';
 
-#requires 'WWW::Mechanize';
+requires 'WWW::Mechanize';
 requires 'Selenium::Remote::Driver';
 
 tests 't/*.t';
