@@ -175,7 +175,12 @@ It combines C<click_link> and C<click_button>.
 
 =cut
 
-*click_link = *click_button = *click_on = \&__not_implemented;
+*click_link = *click_button = \&__not_implemented;
+
+sub click_on {
+    my ($self, $locator) = @_;
+    return $self->click_link($locator) || $self->click_button($locator);
+}
 
 =head2 Forms
 

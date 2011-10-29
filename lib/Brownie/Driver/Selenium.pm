@@ -225,11 +225,6 @@ sub click_button {
     return;
 }
 
-sub click_on {
-    my ($self, $locator) = @_;
-    return $self->click_link($locator) || $self->click_button($locator);
-}
-
 sub _find_and_click {
     my ($self, $xpath) = @_;
     local $@;
