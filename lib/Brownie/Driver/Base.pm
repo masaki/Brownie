@@ -2,7 +2,8 @@ package Brownie::Driver::Base;
 
 use strict;
 use warnings;
-use Carp qw(croak);
+use Carp ();
+use HTML::Selector::XPath ();
 
 =head1 NAME
 
@@ -27,7 +28,15 @@ sub new {
     return bless { %args }, $class;
 }
 
-sub __not_implemented { croak 'NOT IMPLEMENTED' }
+sub __not_implemented { Carp::croak('NOT IMPLEMENTED') }
+
+sub _to_xpath {
+    my ($self, $locator) = @_;
+    # taken from Web::Scraper
+    return $locator =~ m!^(?:/|id\()!
+        ? $locator # XPath
+        : HTML::Selector::XPath::selector_to_xpath($locator); # CSS to XPath
+}
 
 =head2 Browser
 
@@ -69,7 +78,9 @@ Returns current page's path of URL.
 
 =cut
 
-*visit = *current_url = *current_path = \&__not_implemented;
+*visit = \&__not_implemented;
+*current_url = \&__not_implemented;
+*current_path = \&__not_implemented;
 
 =head2 Pages
 
@@ -97,7 +108,56 @@ Takes current page's screenshot and saves to $filename as PNG.
 
 =cut
 
-*title = *source = *screenshot = \&__not_implemented;
+*title = \&__not_implemented;
+*source = \&__not_implemented;
+*screenshot = \&__not_implemented;
+
+=head2 Finder
+
+=over 4
+
+=item * C<find_element($locator)>
+
+Find an element on the page, and return L<Brownie::Node> object.
+
+  my $element = $driver->find_element($locator)
+
+C<$locator> are:
+
+  * CSS Selector
+
+      my $element = $driver->find_element('#id');
+
+  * XPath
+
+      my $element = $driver->find_element('//a[1]');
+
+=item * C<find_elements($locator)>
+
+Find all elements on the page, and return L<Brownie::Node> object list.
+
+  my @elements = $driver->find_elements($locator)
+
+C<$locator> are:
+
+  * CSS Selector
+
+      my @elements = $driver->find_elements('a.navigation');
+
+  * XPath
+
+      my @elements = $driver->find_elements('//input[@type="text"]');
+
+=back
+
+=cut
+
+sub find_element {
+    my ($self, $locator) = @_;
+    return shift @{[ $self->find_elements($locator) ]};
+}
+
+*find_elements = \&__not_implemented;
 
 =head2 Links and Buttons
 
@@ -105,7 +165,7 @@ Takes current page's screenshot and saves to $filename as PNG.
 
 =item * C<click_link($locator)>
 
-Finds and clicks specified links.
+Finds and clicks specified link.
 
   $driver->click_link($locator);
 
@@ -175,7 +235,8 @@ It combines C<click_link> and C<click_button>.
 
 =cut
 
-*click_link = *click_button = \&__not_implemented;
+*click_link = \&__not_implemented;
+*click_button = \&__not_implemented;
 
 sub click_on {
     my ($self, $locator) = @_;
@@ -202,13 +263,14 @@ sub click_on {
 
 =cut
 
-*fill_in = *choose = *check = *uncheck = *select = *attach_file = \&__not_implemented;
+*fill_in = \&__not_implemented;
+*choose = \&__not_implemented;
+*check = \&__not_implemented;
+*uncheck = \&__not_implemented;
+*select = \&__not_implemented;
+*attach_file = \&__not_implemented;
 
 =head2 Matchers
-
-NOT YET
-
-=head2 Finder
 
 NOT YET
 
@@ -236,7 +298,8 @@ If specified DOM element, it returns WebElement object.
 
 =cut
 
-*execute_script = *evaluate_script = \&__not_implemented;
+*execute_script = \&__not_implemented;
+*evaluate_script = \&__not_implemented;
 
 =head1 SEE ALSO
 

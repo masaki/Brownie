@@ -92,6 +92,16 @@ sub DESTROY {
 
 =back
 
+=head2 Finder
+
+=over 4
+
+=item * C<find_element($locator)>
+
+=item * C<find_elements($locator)>
+
+=back
+
 =head2 Links and Buttons
 
 =over 4
@@ -126,10 +136,6 @@ sub DESTROY {
 
 NOT YET
 
-=head2 Finder
-
-NOT YET
-
 =head2 Scripting
 
 =over 4
@@ -142,6 +148,8 @@ NOT YET
 
 =cut
 
+### Browser
+
 sub browser {
     my $self = shift;
 
@@ -153,6 +161,8 @@ sub browser {
 
     return $self->{browser};
 }
+
+### Navigation
 
 sub visit {
     my ($self, $url) = @_;
@@ -168,6 +178,8 @@ sub current_path {
     my $self = shift;
     return $self->current_url->path;
 }
+
+### Pages
 
 sub title {
     my $self = shift;
@@ -185,32 +197,40 @@ sub screenshot {
     write_file($file, { binmode => ':raw' }, $image);
 }
 
+### Finder
+
+sub find_elements {
+    my ($self, $locator) = @_;
+    return map {
+        Brownie::Node::Selenium->new(driver => $self, native => $_);
+    } $self->browser->find_elements($self->_to_xpath($locator));
+}
+
+### Links and Buttons
+
 sub click_link {
     my ($self, $locator) = @_;
 
-    my @xpath;
-    # taken from Web::Scraper
-    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
-    push @xpath, (
+    my @xpath = (
+        $self->_to_xpath($locator),
         "//a[text()='$locator']",
         "//a[\@title='$locator']",
-        "//a//img[\@alt='$locator']"
+        "//a//img[\@alt='$locator']",
     );
 
     for my $xpath (@xpath) {
         return 1 if $self->_find_and_click($xpath);
     }
-    return;
+
+    return 0;
 }
 
 sub click_button {
     my ($self, $locator) = @_;
 
-    my @xpath;
-    # taken from Web::Scraper
-    push @xpath, ($locator =~ m!^(?:/|id\()! ? $locator : selector_to_xpath($locator));
     my $types = q/(@type='submit' or @type='button' or @type='image')/;
-    push @xpath, (
+    my @xpath = (
+        $self->_to_xpath($locator),
         "//input[$types and \@value='$locator']",
         "//input[$types and \@title='$locator']",
         "//button[\@value='$locator']",
@@ -222,7 +242,8 @@ sub click_button {
     for my $xpath (@xpath) {
         return 1 if $self->_find_and_click($xpath);
     }
-    return;
+
+    return 0;
 }
 
 sub _find_and_click {
@@ -234,6 +255,8 @@ sub _find_and_click {
     };
     return $@ ? 0 : 1;
 }
+
+### Forms
 
 sub fill_in {
     my ($self, $locator, %args) = @_;
@@ -259,6 +282,8 @@ sub attach_file {
     my ($self, $locator, $file) = @_;
 }
 
+### Scripting
+
 sub execute_script {
     my ($self, $script) = @_;
     $self->browser->execute_script($script);
@@ -280,7 +305,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Brownie::Driver::Base>, L<Selenium::Remote::Driver>
+L<Brownie::Driver::Base>, L<Brownie::Node::Selenium>, L<Selenium::Remote::Driver>
 
 =cut
 
