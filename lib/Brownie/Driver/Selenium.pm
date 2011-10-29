@@ -83,9 +83,12 @@ sub screenshot {
 
 sub find_elements {
     my ($self, $locator) = @_;
-    return map {
+
+    local $@;
+    my @elements = eval { ($self->browser->find_elements(Brownie::to_xpath($locator))) };
+    return $@ ? () : map {
         Brownie::Node::Selenium->new(driver => $self, native => $_);
-    } $self->browser->find_elements(Brownie::to_xpath($locator));
+    } @elements;
 }
 
 ### Links and Buttons
