@@ -2,6 +2,7 @@ package Brownie::Node::Base;
 
 use strict;
 use warnings;
+use Sub::Install;
 
 use Brownie;
 
@@ -20,8 +21,11 @@ our @Query  = qw(is_displayed is_selected is_checked);
 
 our @Method = (@Getter, @Setter, @Action, @Query);
 for (@Method) {
-    no strict 'refs';
-    *{$_} = \&Brownie::not_implemented;
+    next if __PACKAGE__->can($_);
+    Sub::Install::install_sub({
+        code => Brownie->can('not_implemented'),
+        as   => $_,
+    });
 }
 
 1;

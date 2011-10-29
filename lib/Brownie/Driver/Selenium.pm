@@ -7,9 +7,176 @@ use Selenium::Remote::Driver;
 use URI;
 use File::Slurp 'write_file';
 use MIME::Base64 'decode_base64';
-use HTML::Selector::XPath 'selector_to_xpath';
 
+use Brownie;
 use Brownie::Node::Selenium;
+
+sub new {
+    my ($class, %args) = @_;
+
+    $args{selenium_host}    ||= ($ENV{SELENIUM_HOST}    || '127.0.0.1');
+    $args{selenium_port}    ||= ($ENV{SELENIUM_PORT}    || 4444);
+    $args{selenium_browser} ||= ($ENV{SELENIUM_BROWSER} || 'firefox');
+
+    return $class->SUPER::new(%args);
+}
+
+sub DESTROY {
+    my $self = shift;
+
+    if ($self->{browser}) {
+        $self->{browser}->quit;
+        undef $self->{browser};
+    }
+}
+
+### Browser
+
+sub browser {
+    my $self = shift;
+
+    $self->{browser} ||= Selenium::Remote::Driver->new(
+        remote_server_addr => $self->{selenium_host},
+        port               => $self->{selenium_port},
+        browser_name       => $self->{selenium_browser},
+    );
+
+    return $self->{browser};
+}
+
+### Navigation
+
+sub visit {
+    my ($self, $url) = @_;
+    $self->browser->get("$url"); # stringify for URI
+}
+
+sub current_url {
+    my $self = shift;
+    return URI->new($self->browser->get_current_url);
+}
+
+sub current_path {
+    my $self = shift;
+    return $self->current_url->path;
+}
+
+### Pages
+
+sub title {
+    my $self = shift;
+    return $self->browser->get_title;
+}
+
+sub source {
+    my $self = shift;
+    return $self->browser->get_page_source;
+}
+
+sub screenshot {
+    my ($self, $file) = @_;
+    my $image = decode_base64($self->browser->screenshot);
+    write_file($file, { binmode => ':raw' }, $image);
+}
+
+### Finder
+
+sub find_elements {
+    my ($self, $locator) = @_;
+    return map {
+        Brownie::Node::Selenium->new(driver => $self, native => $_);
+    } $self->browser->find_elements(Brownie::to_xpath($locator));
+}
+
+### Links and Buttons
+
+sub click_link {
+    my ($self, $locator) = @_;
+
+    my @xpath = (
+        Brownie::to_xpath($locator),
+        "//a[text()='$locator']",
+        "//a[\@title='$locator']",
+        "//a//img[\@alt='$locator']",
+    );
+
+    for my $xpath (@xpath) {
+        return 1 if $self->_find_and_click($xpath);
+    }
+
+    return 0;
+}
+
+sub click_button {
+    my ($self, $locator) = @_;
+
+    my $types = q/(@type='submit' or @type='button' or @type='image')/;
+    my @xpath = (
+        Brownie::to_xpath($locator),
+        "//input[$types and \@value='$locator']",
+        "//input[$types and \@title='$locator']",
+        "//button[\@value='$locator']",
+        "//button[\@title='$locator']",
+        "//button[text()='$locator']",
+        "//input[\@type='image' and \@alt='$locator']",
+    );
+
+    for my $xpath (@xpath) {
+        return 1 if $self->_find_and_click($xpath);
+    }
+
+    return 0;
+}
+
+sub _find_and_click {
+    my ($self, $xpath) = @_;
+    local $@;
+    eval {
+        my $element = $self->browser->find_element($xpath);
+        $element->click;
+    };
+    return $@ ? 0 : 1;
+}
+
+### Forms
+
+sub fill_in {
+    my ($self, $locator, %args) = @_;
+}
+
+sub choose {
+    my ($self, $locator) = @_;
+}
+
+sub check {
+    my ($self, $locator) = @_;
+}
+
+sub uncheck {
+    my ($self, $locator) = @_;
+}
+
+sub select {
+    my ($self, $value, %args) = @_;
+}
+
+sub attach_file {
+    my ($self, $locator, $file) = @_;
+}
+
+### Scripting
+
+sub execute_script {
+    my ($self, $script) = @_;
+    $self->browser->execute_script($script);
+}
+
+sub evaluate_script {
+    my ($self, $script) = @_;
+    return $self->browser->execute_script("return $script");
+}
+
+1;
 
 =head1 NAME
 
@@ -40,27 +207,6 @@ You can also set selenium-server parameters using C<%ENV>:
   * SELENIUM_BROWSER
 
 =back
-
-=cut
-
-sub new {
-    my ($class, %args) = @_;
-
-    $args{selenium_host}    ||= ($ENV{SELENIUM_HOST}    || '127.0.0.1');
-    $args{selenium_port}    ||= ($ENV{SELENIUM_PORT}    || 4444);
-    $args{selenium_browser} ||= ($ENV{SELENIUM_BROWSER} || 'firefox');
-
-    return $class->SUPER::new(%args);
-}
-
-sub DESTROY {
-    my $self = shift;
-
-    if ($self->{browser}) {
-        $self->{browser}->quit;
-        undef $self->{browser};
-    }
-}
 
 =head2 Browser
 
@@ -148,154 +294,6 @@ NOT YET
 
 =back
 
-=cut
-
-### Browser
-
-sub browser {
-    my $self = shift;
-
-    $self->{browser} ||= Selenium::Remote::Driver->new(
-        remote_server_addr => $self->{selenium_host},
-        port               => $self->{selenium_port},
-        browser_name       => $self->{selenium_browser},
-    );
-
-    return $self->{browser};
-}
-
-### Navigation
-
-sub visit {
-    my ($self, $url) = @_;
-    $self->browser->get("$url"); # stringify for URI
-}
-
-sub current_url {
-    my $self = shift;
-    return URI->new($self->browser->get_current_url);
-}
-
-sub current_path {
-    my $self = shift;
-    return $self->current_url->path;
-}
-
-### Pages
-
-sub title {
-    my $self = shift;
-    return $self->browser->get_title;
-}
-
-sub source {
-    my $self = shift;
-    return $self->browser->get_page_source;
-}
-
-sub screenshot {
-    my ($self, $file) = @_;
-    my $image = decode_base64($self->browser->screenshot);
-    write_file($file, { binmode => ':raw' }, $image);
-}
-
-### Finder
-
-sub find_elements {
-    my ($self, $locator) = @_;
-    return map {
-        Brownie::Node::Selenium->new(driver => $self, native => $_);
-    } $self->browser->find_elements($self->_to_xpath($locator));
-}
-
-### Links and Buttons
-
-sub click_link {
-    my ($self, $locator) = @_;
-
-    my @xpath = (
-        $self->_to_xpath($locator),
-        "//a[text()='$locator']",
-        "//a[\@title='$locator']",
-        "//a//img[\@alt='$locator']",
-    );
-
-    for my $xpath (@xpath) {
-        return 1 if $self->_find_and_click($xpath);
-    }
-
-    return 0;
-}
-
-sub click_button {
-    my ($self, $locator) = @_;
-
-    my $types = q/(@type='submit' or @type='button' or @type='image')/;
-    my @xpath = (
-        $self->_to_xpath($locator),
-        "//input[$types and \@value='$locator']",
-        "//input[$types and \@title='$locator']",
-        "//button[\@value='$locator']",
-        "//button[\@title='$locator']",
-        "//button[text()='$locator']",
-        "//input[\@type='image' and \@alt='$locator']",
-    );
-
-    for my $xpath (@xpath) {
-        return 1 if $self->_find_and_click($xpath);
-    }
-
-    return 0;
-}
-
-sub _find_and_click {
-    my ($self, $xpath) = @_;
-    local $@;
-    eval {
-        my $element = $self->browser->find_element($xpath);
-        $element->click;
-    };
-    return $@ ? 0 : 1;
-}
-
-### Forms
-
-sub fill_in {
-    my ($self, $locator, %args) = @_;
-}
-
-sub choose {
-    my ($self, $locator) = @_;
-}
-
-sub check {
-    my ($self, $locator) = @_;
-}
-
-sub uncheck {
-    my ($self, $locator) = @_;
-}
-
-sub select {
-    my ($self, $value, %args) = @_;
-}
-
-sub attach_file {
-    my ($self, $locator, $file) = @_;
-}
-
-### Scripting
-
-sub execute_script {
-    my ($self, $script) = @_;
-    $self->browser->execute_script($script);
-}
-
-sub evaluate_script {
-    my ($self, $script) = @_;
-    return $self->browser->execute_script("return $script");
-}
-
 =head1 AUTHOR
 
 NAKAGAWA Masaki E<lt>masaki@cpan.orgE<gt>
@@ -310,5 +308,3 @@ it under the same terms as Perl itself.
 L<Brownie::Driver::Base>, L<Brownie::Node::Selenium>, L<Selenium::Remote::Driver>
 
 =cut
-
-1;

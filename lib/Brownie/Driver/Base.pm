@@ -2,8 +2,43 @@ package Brownie::Driver::Base;
 
 use strict;
 use warnings;
-use Carp ();
-use HTML::Selector::XPath ();
+use Sub::Install;
+
+use Brownie;
+
+sub new {
+    my ($class, %args) = @_;
+    return bless { %args }, $class;
+}
+
+sub find_element {
+    my ($self, $locator) = @_;
+    return shift @{[ $self->find_elements($locator) ]};
+}
+
+sub click_on {
+    my ($self, $locator) = @_;
+    return $self->click_link($locator) || $self->click_button($locator);
+}
+
+our @Browser    = qw(browser);
+our @Navigation = qw(visit current_url current_path);
+our @Pages      = qw(title source screenshot);
+our @Finder     = qw(find_element find_elements);
+our @Actions    = qw(click_link click_button click_on);
+our @Forms      = qw(fill_in choose check uncheck select attach_file);
+our @Scripting  = qw(execute_script evaluate_script);
+
+our @Method = (@Browser, @Navigation, @Pages, @Finder, @Actions, @Forms, @Scripting);
+for (@Method) {
+    next if __PACKAGE__->can($_);
+    Sub::Install::install_sub({
+        code => Brownie->can('not_implemented'),
+        as   => $_,
+    });
+}
+
+1;
 
 =head1 NAME
 
@@ -23,21 +58,6 @@ Brownie::Driver::Base - base class of Brownie::Driver series
 
 =cut
 
-sub new {
-    my ($class, %args) = @_;
-    return bless { %args }, $class;
-}
-
-sub __not_implemented { Carp::croak('NOT IMPLEMENTED') }
-
-sub _to_xpath {
-    my ($self, $locator) = @_;
-    # taken from Web::Scraper
-    return $locator =~ m!^(?:/|id\()!
-        ? $locator # XPath
-        : HTML::Selector::XPath::selector_to_xpath($locator); # CSS to XPath
-}
-
 =head2 Browser
 
 =over 4
@@ -47,10 +67,6 @@ sub _to_xpath {
   my $browser = $driver->browser;
 
 =back
-
-=cut
-
-*browser = \&__not_implemented;
 
 =head2 Navigation
 
@@ -76,12 +92,6 @@ Returns current page's path of URL.
 
 =back
 
-=cut
-
-*visit = \&__not_implemented;
-*current_url = \&__not_implemented;
-*current_path = \&__not_implemented;
-
 =head2 Pages
 
 =over 4
@@ -105,12 +115,6 @@ Takes current page's screenshot and saves to $filename as PNG.
   $driver->screenshot($filename);
 
 =back
-
-=cut
-
-*title = \&__not_implemented;
-*source = \&__not_implemented;
-*screenshot = \&__not_implemented;
 
 =head2 Finder
 
@@ -149,15 +153,6 @@ C<$locator> are:
       my @elements = $driver->find_elements('//input[@type="text"]');
 
 =back
-
-=cut
-
-sub find_element {
-    my ($self, $locator) = @_;
-    return shift @{[ $self->find_elements($locator) ]};
-}
-
-*find_elements = \&__not_implemented;
 
 =head2 Links and Buttons
 
@@ -233,16 +228,6 @@ It combines C<click_link> and C<click_button>.
 
 =back
 
-=cut
-
-*click_link = \&__not_implemented;
-*click_button = \&__not_implemented;
-
-sub click_on {
-    my ($self, $locator) = @_;
-    return $self->click_link($locator) || $self->click_button($locator);
-}
-
 =head2 Forms
 
 =over 4
@@ -260,15 +245,6 @@ sub click_on {
 =item * C<attach_file($locator, $filename)>
 
 =back
-
-=cut
-
-*fill_in = \&__not_implemented;
-*choose = \&__not_implemented;
-*check = \&__not_implemented;
-*uncheck = \&__not_implemented;
-*select = \&__not_implemented;
-*attach_file = \&__not_implemented;
 
 =head2 Matchers
 
@@ -296,15 +272,8 @@ If specified DOM element, it returns WebElement object.
 
 =back
 
-=cut
-
-*execute_script = \&__not_implemented;
-*evaluate_script = \&__not_implemented;
-
 =head1 SEE ALSO
 
 L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 
 =cut
-
-1;

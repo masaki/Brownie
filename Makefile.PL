@@ -5,6 +5,8 @@ license 'perl';
 all_from 'lib/Brownie.pm';
 
 requires 'parent';
+requires 'Carp';
+requires 'Sub::Install';
 requires 'URI';
 requires 'HTML::Selector::XPath';
 requires 'File::Slurp';
