@@ -45,7 +45,7 @@ describe 'Brownie::Driver::Selenium#click_link' => sub {
         is $driver->current_path => $path;
     }
 
-    it 'should click button with "#id" locator' => sub {
+    it 'should click link with "#id" locator' => sub {
         should_click_link_and_go('#link_id', '/link_id');
     };
 

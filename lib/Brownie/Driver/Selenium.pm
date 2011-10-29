@@ -103,11 +103,7 @@ sub click_link {
         "//a//img[\@alt='$locator']",
     );
 
-    for my $xpath (@xpath) {
-        return 1 if $self->_find_and_click($xpath);
-    }
-
-    return 0;
+    return $self->_click(@xpath);
 }
 
 sub click_button {
@@ -124,21 +120,20 @@ sub click_button {
         "//input[\@type='image' and \@alt='$locator']",
     );
 
+    return $self->_click(@xpath);
+}
+
+sub _click {
+    my ($self, @xpath) = @_;
+
     for my $xpath (@xpath) {
-        return 1 if $self->_find_and_click($xpath);
+        if (my $element = $self->find_element($xpath)) {
+            $element->click;
+            return 1;
+        }
     }
 
     return 0;
-}
-
-sub _find_and_click {
-    my ($self, $xpath) = @_;
-    local $@;
-    eval {
-        my $element = $self->browser->find_element($xpath);
-        $element->click;
-    };
-    return $@ ? 0 : 1;
 }
 
 ### Forms
