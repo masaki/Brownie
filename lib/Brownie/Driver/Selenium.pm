@@ -9,6 +9,8 @@ use File::Slurp 'write_file';
 use MIME::Base64 'decode_base64';
 use HTML::Selector::XPath 'selector_to_xpath';
 
+use Brownie::Node::Selenium;
+
 =head1 NAME
 
 Brownie::Driver::Selenium - Selenium WebDriver bridge implementation
