@@ -1,4 +1,4 @@
-package Brownie::Node::Base;
+package Brownie::Node;
 
 use strict;
 use warnings;

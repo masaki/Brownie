@@ -2,7 +2,7 @@ package Brownie::Driver::Selenium;
 
 use strict;
 use warnings;
-use parent 'Brownie::Driver::Base';
+use parent 'Brownie::Driver';
 use Selenium::Remote::Driver;
 use URI;
 use File::Slurp 'write_file';
@@ -303,6 +303,8 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Brownie::Driver::Base>, L<Brownie::Node::Selenium>, L<Selenium::Remote::Driver>
+L<Brownie::Driver>, L<Brownie::Node>, L<Brownie::Node::Selenium>
+
+L<Selenium::Remote::Driver>
 
 =cut

@@ -1,4 +1,4 @@
-package Brownie::Driver::Base;
+package Brownie::Driver;
 
 use strict;
 use warnings;
@@ -42,7 +42,7 @@ for (@Method) {
 
 =head1 NAME
 
-Brownie::Driver::Base - base class of Brownie::Driver series
+Brownie::Driver - base class of Brownie::Driver series
 
 =head1 SYNOPSIS
 
@@ -273,6 +273,8 @@ If specified DOM element, it returns WebElement object.
 =back
 
 =head1 SEE ALSO
+
+L<Brownie::Node>
 
 L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 
