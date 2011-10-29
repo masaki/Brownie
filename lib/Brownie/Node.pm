@@ -29,3 +29,30 @@ for (@Method) {
 }
 
 1;
+
+=head1 NAME
+
+Brownie::Node - base class of Brownie::Node series
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head1 AUTHOR
+
+NAKAGAWA Masaki E<lt>masaki@cpan.orgE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<Brownie::Driver>
+
+L<Brownie::Node::Selenium>, L<Brownie::Node::Mechanize>
+
+=cut
