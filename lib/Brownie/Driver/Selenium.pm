@@ -33,9 +33,9 @@ C<%args> are:
 
 You can also set selenium-server parameters using C<%ENV>:
 
-  * SELENIUM_HOST:    selenium server host or address (default: 127.0.0.1)
-  * SELENIUM_PORT:    selenium server port            (default: 4444)
-  * SELENIUM_BROWSER: selenium server browser name    (default: "firefox")
+  * SELENIUM_HOST
+  * SELENIUM_PORT
+  * SELENIUM_BROWSER
 
 =back
 
@@ -49,6 +49,15 @@ sub new {
     $args{selenium_browser} ||= ($ENV{SELENIUM_BROWSER} || 'firefox');
 
     return $class->SUPER::new(%args);
+}
+
+sub DESTROY {
+    my $self = shift;
+
+    if ($self->{browser}) {
+        $self->{browser}->quit;
+        undef $self->{browser};
+    }
 }
 
 =head2 Browser
@@ -89,71 +98,9 @@ sub new {
 
 =item * C<click_link($locator)>
 
-Finds and clicks specified links.
-
-  $driver->click_link($locator);
-
-C<$locator> are:
-
-=over 8
-
-=item * C<#id>
-
-=item * C<//xpath>
-
-=item * C<text() of E<lt>aE<gt>>
-
-(e.g.) <a href="...">{locator}</a>
-
-=item * C<@title of E<lt>aE<gt>>
-
-(e.g.) <a title="{locator}">...</a>
-
-=item * C<child E<lt>imgE<gt> @alt>
-
-(e.g.) <a><img alt="{locator}"/></a>
-
-=back
-
 =item * C<click_button($locator)>
 
-Finds and clicks specified buttons.
-
-  $driver->click_button($locator);
-
-C<$locator> are:
-
-=over 8
-
-=item * C<#id>
-
-=item * C<//xpath>
-
-=item * C<@value of E<lt>inputE<gt> / E<lt>buttonE<gt>>
-
-(e.g.) <input value="{locator}"/>
-
-=item * C<@title of E<lt>inputE<gt> / E<lt>buttonE<gt>>
-
-(e.g.) <button title="{locator}">...</button>
-
-=item * C<text() of E<lt>buttonE<gt>>
-
-(e.g.) <button>{locator}</button>
-
-=item * C<@alt of E<lt>input type="image"E<gt>>
-
-(e.g.) <input type="image" alt="{locator}"/>
-
-=back
-
 =item * C<click_on($locator)>
-
-Finds and clicks specified links or buttons.
-
-  $driver->click_on($locator);
-
-It combines C<click_link> and C<click_button>.
 
 =back
 
@@ -205,15 +152,6 @@ sub browser {
     );
 
     return $self->{browser};
-}
-
-sub DESTROY {
-    my $self = shift;
-
-    if ($self->{browser}) {
-        $self->{browser}->quit;
-        undef $self->{browser};
-    }
 }
 
 sub visit {
@@ -303,21 +241,27 @@ sub _find_and_click {
 }
 
 sub fill_in {
+    my ($self, $locator, %args) = @_;
 }
 
 sub choose {
+    my ($self, $locator) = @_;
 }
 
 sub check {
+    my ($self, $locator) = @_;
 }
 
 sub uncheck {
+    my ($self, $locator) = @_;
 }
 
 sub select {
+    my ($self, $value, %args) = @_;
 }
 
 sub attach_file {
+    my ($self, $locator, $file) = @_;
 }
 
 sub execute_script {
@@ -327,13 +271,21 @@ sub execute_script {
 
 sub evaluate_script {
     my ($self, $script) = @_;
-    # TODO: Brownie::Node-ify
     return $self->browser->execute_script("return $script");
 }
 
+=head1 AUTHOR
+
+NAKAGAWA Masaki E<lt>masaki@cpan.orgE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
 =head1 SEE ALSO
 
-L<Selenium::Remote::Driver>
+L<Brownie::Driver::Base>, L<Selenium::Remote::Driver>
 
 =cut
 
