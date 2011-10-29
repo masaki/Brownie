@@ -1,8 +1,11 @@
 package Brownie;
 
 use 5.008001;
+use Carp ();
 
 our $VERSION = '0.01';
+
+sub not_implemented { Carp::croak('Not implemented') }
 
 1;
 
