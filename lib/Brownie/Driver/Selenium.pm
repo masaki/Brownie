@@ -96,9 +96,21 @@ sub find_elements {
         @elements = eval { $self->browser->find_elements($xpath) };
     }
 
-    return map {
+    return @elements ? map {
         Brownie::Node::Selenium->new(driver => $self, native => $_);
-    } @elements;
+    } @elements : ();
+}
+
+### Scripting
+
+sub execute_script {
+    my ($self, $script) = @_;
+    $self->browser->execute_script($script);
+}
+
+sub evaluate_script {
+    my ($self, $script) = @_;
+    return $self->browser->execute_script("return $script");
 }
 
 ### Links and Buttons
@@ -170,18 +182,6 @@ sub select {
 
 sub attach_file {
     my ($self, $locator, $file) = @_;
-}
-
-### Scripting
-
-sub execute_script {
-    my ($self, $script) = @_;
-    $self->browser->execute_script($script);
-}
-
-sub evaluate_script {
-    my ($self, $script) = @_;
-    return $self->browser->execute_script("return $script");
 }
 
 1;
