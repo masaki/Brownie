@@ -39,6 +39,17 @@ sub test_httpd {
       <button type="submit" id="button_submit" title="Button Submit Title" value="Button Submit Value">Button Submit</button>
       <input type="button" id="input_button" title="Input Button Title" value="Input Button Value" onclick="javascript:location.href='/js'"/>
       <button type="button" id="button_button" title="Button Button Title" value="Button Button Value" onclick="javascript:location.href='/js'">Button Button</button>
+
+      <input type="hidden" id="input_hidden" value="Hidden Value"/>
+      <input type="checkbox" id="input_checkbox1" value="Checkbox1 Value"/>checkbox1
+      <input type="checkbox" id="input_checkbox2" value="Checkbox2 Value" checked="checked"/>checkbox2
+      <input type="radio" id="input_radio1" name="input_radio" value="Radio1 Value"/>radio1
+      <input type="radio" id="input_radio2" name="input_radio" value="Radio2 Value" checked="checked"/>radio2
+      <select>
+        <option value="1">o1</option>
+        <option value="2">o2</option>
+        <option value="3">o3</option>
+      </select>
     </form>
   </body>
 </html>
