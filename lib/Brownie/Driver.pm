@@ -11,25 +11,27 @@ sub new {
     return bless { %args }, $class;
 }
 
+our @Browser    = qw(browser);
+our @Navigation = qw(visit current_url current_path);
+our @Pages      = qw(title source screenshot);
+our @Finder     = qw(find_element find_elements);
+our @Scripting  = qw(execute_script evaluate_script);
+
 sub find_element {
-    my ($self, $locator) = @_;
-    return shift @{[ $self->find_elements($locator) ]};
+    my ($self, $locator, %args) = @_;
+    return shift @{[ $self->find_elements($locator, %args) ]};
 }
+
+our @Actions    = qw(click_link click_button click_on);
+our @Forms      = qw(fill_in choose check uncheck select attach_file);
 
 sub click_on {
     my ($self, $locator) = @_;
     return $self->click_link($locator) || $self->click_button($locator);
 }
 
-our @Browser    = qw(browser);
-our @Navigation = qw(visit current_url current_path);
-our @Pages      = qw(title source screenshot);
-our @Finder     = qw(find_element find_elements);
-our @Actions    = qw(click_link click_button click_on);
-our @Forms      = qw(fill_in choose check uncheck select attach_file);
-our @Scripting  = qw(execute_script evaluate_script);
-
-our @Method = (@Browser, @Navigation, @Pages, @Finder, @Actions, @Forms, @Scripting);
+our @Method = (@Browser, @Navigation, @Pages, @Finder, @Scripting);
+push @Method, (@Actions, @Forms);
 for (@Method) {
     next if __PACKAGE__->can($_);
     Sub::Install::install_sub({
@@ -120,11 +122,11 @@ Takes current page's screenshot and saves to $filename as PNG.
 
 =over 4
 
-=item * C<find_element($locator)>
+=item * C<find_element($locator, %args)>
 
 Find an element on the page, and return L<Brownie::Node> object.
 
-  my $element = $driver->find_element($locator)
+  my $element = $driver->find_element($locator, %args)
 
 C<$locator> are:
 
@@ -136,11 +138,18 @@ C<$locator> are:
 
       my $element = $driver->find_element('//a[1]');
 
-=item * C<find_elements($locator)>
+C<%args> are:
+
+  * -base: Brownie::Node object where you want to start finding
+
+      my $parent = $driver->find_element('#where_to_parent');
+      my $child  = $driver->find_element('a', -base => $parent);
+
+=item * C<find_elements($locator, %args)>
 
 Find all elements on the page, and return L<Brownie::Node> object list.
 
-  my @elements = $driver->find_elements($locator)
+  my @elements = $driver->find_elements($locator, %args)
 
 C<$locator> are:
 
@@ -151,6 +160,35 @@ C<$locator> are:
   * XPath
 
       my @elements = $driver->find_elements('//input[@type="text"]');
+
+C<%args> are:
+
+  * -base: Brownie::Node object where you want to start finding
+
+      my $parent   = $driver->find_element('#where_to_parent');
+      my @children = $driver->find_elements('li', -base => $parent);
+
+=back
+
+=head2 Scripting
+
+=over 4
+
+=item * C<execute_script($javascript)>
+
+Executes snippet of JavaScript into current page.
+
+  $driver->execute_script('$("body").empty()');
+
+=item * C<evaluate_script($javascript)>
+
+Executes snipptes and returns result.
+
+  my $result = $driver->evaluate_script('1 + 2');
+
+If specified DOM element, it returns WebElement object.
+
+  my $node = $driver->evaluate_script('document.getElementById("foo")');
 
 =back
 
@@ -249,28 +287,6 @@ It combines C<click_link> and C<click_button>.
 =head2 Matchers
 
 NOT YET
-
-=head2 Scripting
-
-=over 4
-
-=item * C<execute_script($javascript)>
-
-Executes snippet of JavaScript into current page.
-
-  $driver->execute_script('$("body").empty()');
-
-=item * C<evaluate_script($javascript)>
-
-Executes snipptes and returns result.
-
-  my $result = $driver->evaluate_script('1 + 2');
-
-If specified DOM element, it returns WebElement object.
-
-  my $node = $driver->evaluate_script('document.getElementById("foo")');
-
-=back
 
 =head1 AUTHOR
 
