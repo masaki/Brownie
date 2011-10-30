@@ -1,6 +1,5 @@
 use Test::More;
 use Test::Flatten;
-use Test::Exception;
 
 BEGIN {
     *describe = *context = *it = \&subtest;
