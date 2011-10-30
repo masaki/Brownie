@@ -28,6 +28,23 @@ sub tag_name {
     return lc $self->native->get_tag_name;
 }
 
+### Query
+
+sub is_displayed {
+    my $self = shift;
+    return $self->native->is_displayed;
+}
+
+sub is_selected {
+    my $self = shift;
+    return $self->native->is_selected;
+}
+
+sub is_checked {
+    my $self = shift;
+    return $self->native->is_selected;
+}
+
 ### Setter
 
 sub set {
@@ -49,6 +66,7 @@ sub select {
 
 sub unselect {
     my $self = shift;
+    # TODO: check if multiple select options
     $self->click if $self->is_selected;
 }
 
@@ -70,23 +88,6 @@ sub find_element {
     }
 
     return;
-}
-
-### Query
-
-sub is_displayed {
-    my $self = shift;
-    return $self->native->is_displayed;
-}
-
-sub is_selected {
-    my $self = shift;
-    return $self->native->is_selected;
-}
-
-sub is_checked {
-    my $self = shift;
-    return $self->native->is_selected;
 }
 
 1;
