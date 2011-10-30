@@ -4,9 +4,10 @@ use strict;
 use warnings;
 use parent 'Brownie::Driver';
 use Selenium::Remote::Driver;
+use Scalar::Util qw(blessed);
 use URI;
-use File::Slurp 'write_file';
-use MIME::Base64 'decode_base64';
+use File::Slurp qw(write_file);
+use MIME::Base64 qw(decode_base64);
 
 use Brownie;
 use Brownie::Node::Selenium;
@@ -82,11 +83,20 @@ sub screenshot {
 ### Finder
 
 sub find_elements {
-    my ($self, $locator) = @_;
+    my ($self, $locator, %args) = @_;
 
-    local $@;
-    my @elements = eval { ($self->browser->find_elements(Brownie::to_xpath($locator))) };
-    return $@ ? () : map {
+    my @elements = ();
+    my $xpath = Brownie::to_xpath($locator);
+
+    if (my $base = $args{-base}) {
+        my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
+        @elements = eval { $self->browser->find_child_elements($node, $xpath) };
+    }
+    else {
+        @elements = eval { $self->browser->find_elements($xpath) };
+    }
+
+    return map {
         Brownie::Node::Selenium->new(driver => $self, native => $_);
     } @elements;
 }
