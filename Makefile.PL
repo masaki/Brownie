@@ -22,6 +22,7 @@ test_requires 'Test::Flatten';
 test_requires 'Test::Fake::HTTPD' => 0.03;
 test_requires 'Test::Exception';
 test_requires 'Test::File';
+test_requires 'Exporter';
 test_requires 'File::Temp';
 
 recursive_author_tests 'xt';
