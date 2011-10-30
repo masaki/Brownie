@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use parent 'Brownie::Node';
 
+use Brownie;
+
 ### Getter
 
 sub attr {
@@ -55,6 +57,19 @@ sub unselect {
 sub click {
     my $self = shift;
     $self->native->click;
+}
+
+### Finder
+
+sub find_element {
+    my ($self, $locator) = @_;
+
+    my $xpath = Brownie::to_xpath($locator);
+    if (my $child = $self->driver->find_element($xpath, -base => $self)) {
+        return ref($self)->new(driver => $self->driver, native => $child);
+    }
+
+    return;
 }
 
 ### Query

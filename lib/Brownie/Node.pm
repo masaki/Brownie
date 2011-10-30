@@ -17,6 +17,7 @@ sub native { shift->{native} }
 our @Getter = qw(attr value text tag_name);
 our @Setter = qw(set select unselect);
 our @Action = qw(click);
+our @Finder = qw(find_element find_elements);
 our @Query  = qw(is_displayed is_selected is_checked);
 
 our @Method = (@Getter, @Setter, @Action, @Query);
