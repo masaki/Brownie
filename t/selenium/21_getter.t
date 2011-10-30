@@ -14,8 +14,6 @@ my $driver = Brownie::Driver::Selenium->new;
 my $httpd = test_httpd();
 $driver->visit($httpd->endpoint);
 
-# our @Getter = qw(attr value text tag_name);
-
 describe 'Brownie::Node::Selenium#attr' => sub {
     my $elem = $driver->find_element('h1');
 
@@ -24,7 +22,7 @@ describe 'Brownie::Node::Selenium#attr' => sub {
     };
 };
 
-describe 'Brownie::Node::Selenium#value ' => sub {
+describe 'Brownie::Node::Selenium#value' => sub {
     my $elem = $driver->find_element('#input_submit');
 
     it 'should access to value attribute' => sub {
