@@ -45,10 +45,15 @@ sub test_httpd {
       <input type="checkbox" id="input_checkbox2" value="Checkbox2 Value" checked="checked"/>checkbox2
       <input type="radio" id="input_radio1" name="input_radio" value="Radio1 Value"/>radio1
       <input type="radio" id="input_radio2" name="input_radio" value="Radio2 Value" checked="checked"/>radio2
-      <select>
-        <option value="1">o1</option>
-        <option value="2">o2</option>
-        <option value="3">o3</option>
+      <select id="select_single">
+        <option value="1" id="select_option1">o1</option>
+        <option value="2" id="select_option2" selected="selected">o2</option>
+        <option value="3" id="select_option3">o3</option>
+      </select>
+      <select id="select_multiple" multiple="multiple">
+        <option value="4" id="select_option4">o4</option>
+        <option value="5" id="select_option5" selected="selected">o5</option>
+        <option value="6" id="select_option6" selected="selected">o6</option>
       </select>
     </form>
   </body>
