@@ -79,15 +79,18 @@ sub click {
 
 ### Finder
 
-sub find_element {
+sub find_elements {
     my ($self, $locator) = @_;
 
     my $xpath = Brownie::to_xpath($locator);
-    if (my $child = $self->driver->find_element($xpath, -base => $self)) {
-        return ref($self)->new(driver => $self->driver, native => $child);
-    }
+    my @children = $self->driver->find_elements($xpath, -base => $self);
 
-    return;
+    return @children ? @children : ();
+}
+
+sub find_element {
+    my ($self, $locator) = @_;
+    return shift @{[ $self->find_elements($locator) ]};
 }
 
 1;

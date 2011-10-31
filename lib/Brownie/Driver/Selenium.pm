@@ -24,11 +24,7 @@ sub new {
 
 sub DESTROY {
     my $self = shift;
-
-    if ($self->{browser}) {
-        $self->{browser}->quit;
-        undef $self->{browser};
-    }
+    delete $self->{browser};
 }
 
 ### Browser
@@ -90,13 +86,14 @@ sub find_elements {
 
     if (my $base = $args{-base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
+        $xpath =~ s!^/+!!g; # abs2rel
         @elements = eval { $self->browser->find_child_elements($node, $xpath) };
     }
     else {
         @elements = eval { $self->browser->find_elements($xpath) };
     }
 
-    return @elements ? map {
+    return scalar(@elements) > 0 ? map {
         Brownie::Node::Selenium->new(driver => $self, native => $_);
     } @elements : ();
 }

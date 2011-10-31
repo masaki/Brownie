@@ -59,6 +59,15 @@ sub test_httpd {
         <option value="6" id="select_option6" selected="selected">o6</option>
       </select>
     </form>
+
+    <p>
+      <a href="#" class="child">child1</a>
+      <a href="#" class="child">child2</a>
+    </p>
+    <p id="parent">
+      <a href="#" class="child">child3</a>
+      <a href="#" class="child">child4</a>
+    </p>
   </body>
 </html>
 EOF
