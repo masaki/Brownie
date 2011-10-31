@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Class::Load;
 use Sub::Install;
+use Class::Method::Modifiers;
 
 use Brownie::Driver;
 use Brownie::Node;
@@ -16,9 +17,9 @@ sub new {
     $args{driver_args}  ||= {};
 
     Class::Load::load_class($args{driver_class});
-    my $driver = $args{driver_class}->new(%${args{driver_args}});
+    my $driver = $args{driver_class}->new(%{$args{driver_args}});
 
-    return bless { %args, driver => $driver }, $class;
+    return bless { %args, scopes => [], driver => $driver }, $class;
 }
 
 sub DESTROY {
@@ -34,6 +35,13 @@ for my $method (Brownie::Driver->PROVIDED_METHODS) {
     });
 }
 
+sub current_node { shift->{scopes}->[-1] }
+
+after 'visit' => sub {
+    my $self = shift;
+    # clear scopes
+    $self->{scopes} = [ $self->document ];
+};
 
 1;
 

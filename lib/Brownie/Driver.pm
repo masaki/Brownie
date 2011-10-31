@@ -12,9 +12,11 @@ sub new {
 }
 
 our @Navigation = qw(visit current_url current_path);
-our @Pages      = qw(title source screenshot);
+our @Pages      = qw(title source document screenshot);
 our @Finder     = qw(find_element find_elements);
 our @Scripting  = qw(execute_script evaluate_script);
+
+sub document { shift->find_element('/html') }
 
 sub find_element {
     my ($self, $locator, %args) = @_;
