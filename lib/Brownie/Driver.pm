@@ -25,7 +25,7 @@ sub PROVIDED_METHODS {
     return (@Navigation, @Pages, @Finder, @Scripting);
 }
 
-for ('browser', @Methods) {
+for ('browser', PROVIDED_METHODS) {
     next if __PACKAGE__->can($_);
     Sub::Install::install_sub({
         code => Brownie->can('not_implemented'),
