@@ -35,20 +35,6 @@ for ('browser', PROVIDED_METHODS) {
     });
 }
 
-=comment
-our @Methods
-our @Actions    = qw(click_link click_button click_on);
-our @Forms      = qw(fill_in choose check uncheck select attach_file);
-
-sub click_on {
-    my ($self, $locator) = @_;
-    return $self->click_link($locator) || $self->click_button($locator);
-}
-
-our @Method = (@Browser, @Navigation, @Pages, @Finder, @Scripting);
-push @Method, (@Actions, @Forms);
-=cut
-
 1;
 
 =head1 NAME
@@ -119,6 +105,12 @@ Returns current page's HTML source.
 
   my $source = $driver->source;
 
+=item * C<document>
+
+Returns current page's HTML root element
+
+  my $element = $driver->document;
+
 =item * C<screenshot($filename)>
 
 Takes current page's screenshot and saves to $filename as PNG.
@@ -149,7 +141,7 @@ C<$locator> are:
 
 C<%args> are:
 
-  * -base: Brownie::Node object where you want to start finding
+  * C<-base>: Brownie::Node object where you want to start finding
 
       my $parent = $driver->find_element('#where_to_parent');
       my $child  = $driver->find_element('a', -base => $parent);
@@ -172,7 +164,7 @@ C<$locator> are:
 
 C<%args> are:
 
-  * -base: Brownie::Node object where you want to start finding
+  * C<-base>: Brownie::Node object where you want to start finding
 
       my $parent   = $driver->find_element('#where_to_parent');
       my @children = $driver->find_elements('li', -base => $parent);
@@ -201,98 +193,6 @@ If specified DOM element, it returns WebElement object.
 
 =back
 
-=head2 Links and Buttons
-
-=over 4
-
-=item * C<click_link($locator)>
-
-Finds and clicks specified link.
-
-  $driver->click_link($locator);
-
-C<$locator> are:
-
-=over 8
-
-=item * C<#id>
-
-=item * C<//xpath>
-
-=item * C<text() of E<lt>aE<gt>>
-
-(e.g.) <a href="...">{locator}</a>
-
-=item * C<@title of E<lt>aE<gt>>
-
-(e.g.) <a title="{locator}">...</a>
-
-=item * C<child E<lt>imgE<gt> @alt>
-
-(e.g.) <a><img alt="{locator}"/></a>
-
-=back
-
-=item * C<click_button($locator)>
-
-Finds and clicks specified buttons.
-
-  $driver->click_button($locator);
-
-C<$locator> are:
-
-=over 8
-
-=item * C<#id>
-
-=item * C<//xpath>
-
-=item * C<@value of E<lt>inputE<gt> / E<lt>buttonE<gt>>
-
-(e.g.) <input value="{locator}"/>
-
-=item * C<@title of E<lt>inputE<gt> / E<lt>buttonE<gt>>
-
-(e.g.) <button title="{locator}">...</button>
-
-=item * C<text() of E<lt>buttonE<gt>>
-
-(e.g.) <button>{locator}</button>
-
-=item * C<@alt of E<lt>input type="image"E<gt>>
-
-(e.g.) <input type="image" alt="{locator}"/>
-
-=back
-
-=item * C<click_on($locator)>
-
-Finds and clicks specified links or buttons.
-
-  $driver->click_on($locator);
-
-It combines C<click_link> and C<click_button>.
-
-=back
-
-=head2 Forms
-
-=over 4
-
-=item * C<fill_in($locator, -with => $value)>
-
-=item * C<choose($locator)>
-
-=item * C<check($locator)>
-
-=item * C<uncheck($locator)>
-
-=item * C<select($value, -from => $locator)>
-
-=item * C<attach_file($locator, $filename)>
-
-=back
-
 =head2 Matchers
 
 NOT YET
@@ -308,7 +208,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Brownie::Node>
+L<Brownie::Node>, L<Brownie::Session>
 
 L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 

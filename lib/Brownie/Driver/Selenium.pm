@@ -86,8 +86,7 @@ sub find_elements {
 
     if (my $base = $args{-base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
-        $xpath =~ s!^/+!!g; # abs2rel
-        @elements = eval { $self->browser->find_child_elements($node, $xpath) };
+        @elements = eval { $self->browser->find_child_elements($node, ".$xpath") }; # abs2rel
     }
     else {
         @elements = eval { $self->browser->find_elements($xpath) };
@@ -108,51 +107,6 @@ sub execute_script {
 sub evaluate_script {
     my ($self, $script) = @_;
     return $self->browser->execute_script("return $script");
-}
-
-### Links and Buttons
-
-sub click_link {
-    my ($self, $locator) = @_;
-
-    my @xpath = (
-        Brownie::to_xpath($locator),
-        "//a[text()='$locator']",
-        "//a[\@title='$locator']",
-        "//a//img[\@alt='$locator']",
-    );
-
-    return $self->_click(@xpath);
-}
-
-sub click_button {
-    my ($self, $locator) = @_;
-
-    my $types = q/(@type='submit' or @type='button' or @type='image')/;
-    my @xpath = (
-        Brownie::to_xpath($locator),
-        "//input[$types and \@value='$locator']",
-        "//input[$types and \@title='$locator']",
-        "//button[\@value='$locator']",
-        "//button[\@title='$locator']",
-        "//button[text()='$locator']",
-        "//input[\@type='image' and \@alt='$locator']",
-    );
-
-    return $self->_click(@xpath);
-}
-
-sub _click {
-    my ($self, @xpath) = @_;
-
-    for my $xpath (@xpath) {
-        if (my $element = $self->find_element($xpath)) {
-            $element->click;
-            return 1;
-        }
-    }
-
-    return 0;
 }
 
 ### Forms
@@ -241,6 +195,8 @@ You can also set selenium-server parameters using C<%ENV>:
 
 =item * C<source>
 
+=item * C<document>
+
 =item * C<screenshot($filename)>
 
 =back
@@ -252,36 +208,6 @@ You can also set selenium-server parameters using C<%ENV>:
 =item * C<find_element($locator)>
 
 =item * C<find_elements($locator)>
-
-=back
-
-=head2 Links and Buttons
-
-=over 4
-
-=item * C<click_link($locator)>
-
-=item * C<click_button($locator)>
-
-=item * C<click_on($locator)>
-
-=back
-
-=head2 Forms
-
-=over 4
-
-=item * C<fill_in($locator, -with => $value)>
-
-=item * C<choose($locator)>
-
-=item * C<check($locator)>
-
-=item * C<uncheck($locator)>
-
-=item * C<select($value, -from => $locator)>
-
-=item * C<attach_file($locator, $filename)>
 
 =back
 

@@ -11,96 +11,91 @@ use t::Helper;
 my $session = Brownie::Session->new(driver_name => 'Selenium');
 my $httpd = test_httpd;
 
-describe 'Brownie::Driver::Selenium#click_link' => sub {
+describe 'Brownie::Session#click_link' => sub {
     sub click_link_ok {
-        my ($locator, $path) = @_;
+        my $locator = shift;
         $session->visit($httpd->endpoint);
+        my $url = $session->current_url;
         $session->click_link($locator);
-        is $session->current_path => $path;
+        isnt $session->current_url => $url;
     }
 
     it 'should click link with "#id" locator' => sub {
-        click_link_ok('#link_id', '/id');
+        click_link_ok('#link_id');
     };
 
     it 'should click link with "//xpath" locator' => sub {
-        click_link_ok('//a[2]', '/xpath');
-        click_link_ok('//a[@href="/xpath"]', '/xpath');
+        click_link_ok('//a[2]');
+        click_link_ok('//a[@href="/xpath"]');
     };
 
     it 'should click link with "a[text()]" locator' => sub {
-        click_link_ok('Text of Link', '/text');
+        click_link_ok('Text of Link');
     };
 
     it 'should click link with "a[@title]" locator' => sub {
-        click_link_ok('Title of Link', '/title');
+        click_link_ok('Title of Link');
     };
 
     it 'should click link with "a/img[@alt]" locator' => sub {
-        click_link_ok('Alt of Image', '/img/alt');
+        click_link_ok('Alt of Image');
     };
 };
 
-=comment
-describe 'Brownie::Driver::Selenium#click_button' => sub {
-    sub should_click_button_and_go {
-        my ($locator, $path) = @_;
-        $driver->visit($url);
-        $driver->click_button($locator);
-        is $driver->current_path => $path;
+describe 'Brownie::Session#click_button' => sub {
+    sub click_button_ok {
+        my $locator = shift;
+        $session->visit($httpd->endpoint);
+        my $url = $session->current_url;
+        $session->click_button($locator);
+        isnt $session->current_url => $url;
     }
 
     it 'should click button with "#id" locator' => sub {
-        my %map = (
-            '#input_submit'  => '/form',
-            '#input_button'  => '/js',
-            '#input_image'   => '/form',
-            '#button_submit' => '/form',
-            '#button_button' => '/js',
-        );
-        for my $id (keys %map) {
-            should_click_button_and_go($id, $map{$id});
+        my @id = qw(#input_submit #input_button #input_image #button_submit #button_button);
+        for my $id (@id) {
+            click_button_ok($id);
         }
     };
 
     it 'should click button with "//xpath" locator' => sub {
-        should_click_button_and_go('//input[1]', '/form');
-        should_click_button_and_go('//input[2]', '/js');
+        click_button_ok('//input[1]');
+        click_button_ok('//input[2]');
     };
 
     it 'should click button with "input[@title]" locator' => sub {
-        should_click_button_and_go('Input Submit Title', '/form');
+        click_button_ok('Input Submit Title');
     };
     it 'should click button with "input[@value]" locator' => sub {
-        should_click_button_and_go('Input Submit Value', '/form');
+        click_button_ok('Input Submit Value');
     };
     it 'should click button with "button[@title]" locator' => sub {
-        should_click_button_and_go('Button Submit Title', '/form');
+        click_button_ok('Button Submit Title');
     };
     it 'should click button with "button[@value]" locator' => sub {
-        should_click_button_and_go('Button Submit Value', '/form');
+        click_button_ok('Button Submit Value');
     };
     it 'should click button with "button[text()]" locator' => sub {
-        should_click_button_and_go('Button Submit', '/form');
+        click_button_ok('Button Submit');
     };
 };
 
-describe 'Brownie::Driver::Selenium#click_on' => sub {
-    sub should_click_and_go {
-        my ($locator, $path) = @_;
-        $driver->visit($url);
-        $driver->click_on($locator);
-        is $driver->current_path => $path;
+describe 'Brownie::Session#click_on' => sub {
+    sub click_ok {
+        my $locator = shift;
+        $session->visit($httpd->endpoint);
+        my $url = $session->current_url;
+        $session->click_on($locator);
+        isnt $session->current_url => $url;
     }
 
     it 'should click link' => sub {
-        should_click_and_go('#link_id', '/link_id');
+        click_ok('#link_id');
     };
 
     it 'should click button' => sub {
-        should_click_and_go('Input Submit Title', '/form');
+        click_ok('Input Submit Title');
     };
 };
-=cut
 
 done_testing;
