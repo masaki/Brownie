@@ -17,14 +17,20 @@ sub elem ($) { $driver->find_element($_[0]) }
 
 describe 'Brownie::Node::Selenium#find_elements' => sub {
     it 'should get elements under specified element' => sub {
-        my $parent = elem('p#parent');
-        my @children = $parent->find_elements('a');
+        my @children = elem('p#parent')->find_elements('a');
         is scalar(@children) => 2;
         is $children[0]->text => 'child3';
         is $children[1]->text => 'child4';
 
         my @anchors = $driver->find_elements('a');
         cmp_ok scalar(@anchors), '>', scalar(@children);
+    };
+};
+
+describe 'Brownie::Node::Selenium#find_element' => sub {
+    it 'should get an element under specified element' => sub {
+        my $child = elem('p#parent')->find_elements('a');
+        is $child->text => 'child3';
     };
 };
 
