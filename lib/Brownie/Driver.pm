@@ -11,7 +11,6 @@ sub new {
     return bless { %args }, $class;
 }
 
-our @Browser    = qw(browser);
 our @Navigation = qw(visit current_url current_path);
 our @Pages      = qw(title source screenshot);
 our @Finder     = qw(find_element find_elements);
@@ -22,6 +21,20 @@ sub find_element {
     return shift @{[ $self->find_elements($locator, %args) ]};
 }
 
+sub PROVIDED_METHODS {
+    return (@Navigation, @Pages, @Finder, @Scripting);
+}
+
+for ('browser', @Methods) {
+    next if __PACKAGE__->can($_);
+    Sub::Install::install_sub({
+        code => Brownie->can('not_implemented'),
+        as   => $_,
+    });
+}
+
+=comment
+our @Methods
 our @Actions    = qw(click_link click_button click_on);
 our @Forms      = qw(fill_in choose check uncheck select attach_file);
 
@@ -32,13 +45,7 @@ sub click_on {
 
 our @Method = (@Browser, @Navigation, @Pages, @Finder, @Scripting);
 push @Method, (@Actions, @Forms);
-for (@Method) {
-    next if __PACKAGE__->can($_);
-    Sub::Install::install_sub({
-        code => Brownie->can('not_implemented'),
-        as   => $_,
-    });
-}
+=cut
 
 1;
 
