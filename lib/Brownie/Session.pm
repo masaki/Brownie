@@ -43,6 +43,49 @@ after 'visit' => sub {
     $self->{scopes} = [ $self->document ];
 };
 
+sub click_link {
+    my ($self, $locator) = @_;
+
+    my @xpath = (
+        Brownie::to_xpath($locator),
+        "//a[text()='$locator']",
+        "//a[\@title='$locator']",
+        "//a//img[\@alt='$locator']",
+    );
+
+    return $self->_click(@xpath);
+}
+
+sub click_button {
+    my ($self, $locator) = @_;
+
+    my $types = q/(@type='submit' or @type='button' or @type='image')/;
+    my @xpath = (
+        Brownie::to_xpath($locator),
+        "//input[$types and \@value='$locator']",
+        "//input[$types and \@title='$locator']",
+        "//button[\@value='$locator']",
+        "//button[\@title='$locator']",
+        "//button[text()='$locator']",
+        "//input[\@type='image' and \@alt='$locator']",
+    );
+
+    return $self->_click(@xpath);
+}
+
+sub _click {
+    my ($self, @xpath) = @_;
+
+    for my $xpath (@xpath) {
+        if (my $element = $self->current_node->find_element($xpath)) {
+            $element->click;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 1;
 
 =head1 NAME
