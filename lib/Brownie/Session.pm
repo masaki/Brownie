@@ -31,7 +31,7 @@ sub driver { shift->{driver} }
 for my $method (Brownie::Driver->PROVIDED_METHODS) {
     Sub::Install::install_sub({
         code => sub { shift->driver->$method(@_) },
-        as   => $_,
+        as   => $method,
     });
 }
 
