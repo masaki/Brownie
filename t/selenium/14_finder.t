@@ -1,6 +1,5 @@
 use Test::More;
 use Test::Flatten;
-use Test::Fake::HTTPD;
 use Test::Exception;
 
 BEGIN {
@@ -8,26 +7,10 @@ BEGIN {
 }
 
 use Brownie::Driver::Selenium;
-
-my $httpd = run_http_server {
-    my $html = <<'EOF';
-<html>
-<head><title>test</title></head>
-<body>
-<ul>
-<li>1</li>
-<li class="even">2</li>
-<li>3</li>
-<li class="even">4</li>
-<li>5</li>
-</ul>
-</body>
-</html>
-EOF
-    [ 200, ['Content-Type', 'text/html;charset=utf-8'], [$html] ];
-};
+use t::Helper;
 
 my $driver = Brownie::Driver::Selenium->new;
+my $httpd = test_httpd;
 $driver->visit($httpd->endpoint);
 
 describe 'Brownie::Driver::Selenium#find_elements' => sub {
@@ -43,7 +26,7 @@ describe 'Brownie::Driver::Selenium#find_elements' => sub {
 
     it 'should return () if not exist locator is given' => sub {
         my @elems;
-        lives_ok { @elems = $driver->find_elements('p') };
+        lives_ok { @elems = $driver->find_elements('span.noexist') };
         is scalar(@elems) => 0;
     };
 };
@@ -61,7 +44,7 @@ describe 'Brownie::Driver::Selenium#find_element' => sub {
 
     it 'should return undef if not exist locator is given' => sub {
         my $elem;
-        lives_ok { $elem = $driver->find_element('p') };
+        lives_ok { $elem = $driver->find_element('span#noexist') };
         ok !$elem;
     };
 };

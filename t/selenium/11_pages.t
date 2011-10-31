@@ -1,6 +1,5 @@
 use Test::More;
 use Test::Flatten;
-use Test::Fake::HTTPD;
 use Test::File;
 
 BEGIN {
@@ -9,31 +8,23 @@ BEGIN {
 
 use Brownie::Driver::Selenium;
 use File::Temp;
-
-my $title = 'Test';
-my $body  = '200 OK';
-my $raw   = "<html><head><title>$title</title></head><body>$body</body></html>";
-
-my $httpd = run_http_server {
-    [ 200, ['Content-Type', 'text/html;charset=utf-8'], [$raw] ];
-};
-my $url = sprintf 'http://127.0.0.1:%d/', $httpd->port;
+use t::Helper;
 
 my $driver = Brownie::Driver::Selenium->new;
-$driver->visit($url);
+my $httpd = test_httpd;
+$driver->visit($httpd->endpoint);
 
 describe 'Brownie::Driver::Selenium#title' => sub {
     it 'should get <title> text' => sub {
-        is $driver->title => $title;
+        is $driver->title => 'test';
     };
 };
 
 describe 'Brownie::Driver::Selenium#source' => sub {
     it 'should return raw content' => sub {
         my $data = $driver->source;
-        like $data => qr!<html.+</html>!;
-        like $data => qr!$title!;
-        like $data => qr!$body!;
+        like $data => qr!<html.+</html>!s;
+        like $data => qr!<title>test</title>!;
     };
 };
 

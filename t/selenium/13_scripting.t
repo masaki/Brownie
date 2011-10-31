@@ -1,6 +1,5 @@
 use Test::More;
 use Test::Flatten;
-use Test::Fake::HTTPD;
 use Test::Exception;
 
 BEGIN {
@@ -8,19 +7,10 @@ BEGIN {
 }
 
 use Brownie::Driver::Selenium;
+use t::Helper;
 
 my $driver = Brownie::Driver::Selenium->new;
-my $httpd = run_http_server {
-    my $content = <<'EOF';
-<html>
-<head><title>test</title></head>
-<body>
-<p><a id="link" href="/go">Link</a></p>
-</body>
-</html>
-EOF
-    return [ 200, ['Content-Type', 'text/html;charset=utf-8'], [$content] ];
-};
+my $httpd = test_httpd;
 
 describe 'Brownie::Driver::Selenium#execute_script' => sub {
     it 'should execute script and change elements' => sub {
