@@ -58,4 +58,38 @@ describe 'Brownie::Node::Selenium#unselect' => sub {
     };
 };
 
+describe 'Brownie::Node::Selenium#set' => sub {
+    $driver->visit($httpd->endpoint);
+
+    sub should_set_new_text {
+        my ($locator, $old) = @_;
+        my $elem = elem($locator);
+        is $elem->value => $old;
+        my $new = $old . time;
+        $elem->set($new);
+        is $elem->value => $new;
+    }
+
+    it 'should set text to input' => sub {
+        should_set_new_text('#input_text', 'Input Text Value');
+    };
+
+    it 'should set text to textarea' => sub {
+        should_set_new_text('#textarea', 'Textarea Text');
+    };
+
+    sub should_select_using_set {
+        my $locator = shift;
+        my $elem = elem($locator);
+        ok $elem->is_not_checked;
+        $elem->set;
+        ok $elem->is_checked;
+    };
+
+    it 'should alias to select on checkbox or radio button' => sub {
+        should_select_using_set('#input_checkbox1');
+        should_select_using_set('#input_radio1');
+    };
+};
+
 done_testing;
