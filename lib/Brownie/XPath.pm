@@ -2,7 +2,15 @@ package Brownie::XPath;
 
 use strict;
 use warnings;
-use HTML::Selector::XPath qw(selector_to_xpath);
+use HTML::Selector::XPath ();
+
+sub to_xpath {
+    my $locator = shift;
+    # taken from Web::Scraper
+    return $locator =~ m!^(?:/|id\()!
+        ? $locator # XPath
+        : HTML::Selector::XPath::selector_to_xpath($locator); # CSS to XPath
+}
 
 sub to_link {
     my $locator = shift;

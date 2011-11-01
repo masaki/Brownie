@@ -9,7 +9,7 @@ use URI;
 use File::Slurp qw(write_file);
 use MIME::Base64 qw(decode_base64);
 
-use Brownie;
+use Brownie::XPath;
 use Brownie::Node::Selenium;
 
 sub new {
@@ -82,7 +82,7 @@ sub find_elements {
     my ($self, $locator, %args) = @_;
 
     my @elements = ();
-    my $xpath = Brownie::to_xpath($locator);
+    my $xpath = Brownie::XPath::to_xpath($locator);
 
     if (my $base = $args{-base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
@@ -109,32 +109,6 @@ sub evaluate_script {
     return $self->browser->execute_script("return $script");
 }
 
-### Forms
-
-sub fill_in {
-    my ($self, $locator, %args) = @_;
-}
-
-sub choose {
-    my ($self, $locator) = @_;
-}
-
-sub check {
-    my ($self, $locator) = @_;
-}
-
-sub uncheck {
-    my ($self, $locator) = @_;
-}
-
-sub select {
-    my ($self, $value, %args) = @_;
-}
-
-sub attach_file {
-    my ($self, $locator, $file) = @_;
-}
-
 1;
 
 =head1 NAME
@@ -146,6 +120,8 @@ Brownie::Driver::Selenium - Selenium WebDriver bridge implementation
 Please see L<Brownie::Driver::Base> document.
 
 =head1 METHODS
+
+=head2 IMPLEMENTED
 
 =over 4
 
@@ -165,19 +141,7 @@ You can also set selenium-server parameters using C<%ENV>:
   * SELENIUM_PORT
   * SELENIUM_BROWSER
 
-=back
-
-=head2 Browser
-
-=over 4
-
 =item * C<browser>
-
-=back
-
-=head2 Navigation
-
-=over 4
 
 =item * C<visit($url)>
 
@@ -185,45 +149,27 @@ You can also set selenium-server parameters using C<%ENV>:
 
 =item * C<current_path>
 
-=back
-
-=head2 Pages
-
-=over 4
-
 =item * C<title>
 
 =item * C<source>
 
-=item * C<document>
-
 =item * C<screenshot($filename)>
 
-=back
-
-=head2 Finder
-
-=over 4
-
-=item * C<find_element($locator)>
-
 =item * C<find_elements($locator)>
-
-=back
-
-=head2 Matchers
-
-NOT YET
-
-=head2 Scripting
-
-=over 4
 
 =item * C<execute_script($javascript)>
 
 =item * C<evaluate_script($javascript)>
 
 =back
+
+=head2 OVERRIDED
+
+=over 4
+
+=item * C<document>
+
+=back * C<find_element($locator)>
 
 =head1 AUTHOR
 

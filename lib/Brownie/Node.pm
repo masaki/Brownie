@@ -25,6 +25,11 @@ our @Setter = qw(set select unselect);
 our @Action = qw(click);
 our @Finder = qw(find_element find_elements);
 
+sub find_element {
+    my ($self, $locator) = @_;
+    return shift @{[ $self->find_elements($locator) ]};
+}
+
 our @Method = (@Getter, @Query, @Setter, @Action, @Finder);
 for (@Method) {
     next if __PACKAGE__->can($_);
@@ -45,6 +50,42 @@ Brownie::Node - base class of Brownie::Node series
 =head1 DESCRIPTION
 
 =head1 METHODS
+
+=over 4
+
+=item * C<new(%args)>
+
+=item * C<driver>
+
+=item * C<native>
+
+=item * C<attr>
+
+=item * C<value>
+
+=item * C<text>
+
+=item * C<tag_name>
+
+=item * C<is_displayed>, C<is_not_displayed>
+
+=item * C<is_checked>, C<is_not_checked>
+
+=item * C<is_selected>, C<is_not_selected>
+
+=item * C<set($value)>
+
+=item * C<select>
+
+=item * C<unselect>
+
+=item * C<click>
+
+=item * C<find_element($locator)>
+
+=item * C<find_elements($locator)>
+
+=back
 
 =head1 AUTHOR
 

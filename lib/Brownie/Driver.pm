@@ -51,23 +51,9 @@ Brownie::Driver - base class of Brownie::Driver series
 
 =item * C<new( %args )>
 
-=back
-
-=cut
-
-=head2 Browser
-
-=over 4
-
 =item * C<browser>
 
   my $browser = $driver->browser;
-
-=back
-
-=head2 Navigation
-
-=over 4
 
 =item * C<visit($url)>
 
@@ -86,12 +72,6 @@ Returns current page's URL.
 Returns current page's path of URL.
 
   my $path = $driver->current_path;
-
-=back
-
-=head2 Pages
-
-=over 4
 
 =item * C<title>
 
@@ -116,12 +96,6 @@ Returns current page's HTML root element
 Takes current page's screenshot and saves to $filename as PNG.
 
   $driver->screenshot($filename);
-
-=back
-
-=head2 Finder
-
-=over 4
 
 =item * C<find_element($locator, %args)>
 
@@ -169,12 +143,6 @@ C<%args> are:
       my $parent   = $driver->find_element('#where_to_parent');
       my @children = $driver->find_elements('li', -base => $parent);
 
-=back
-
-=head2 Scripting
-
-=over 4
-
 =item * C<execute_script($javascript)>
 
 Executes snippet of JavaScript into current page.
@@ -192,10 +160,6 @@ If specified DOM element, it returns WebElement object.
   my $node = $driver->evaluate_script('document.getElementById("foo")');
 
 =back
-
-=head2 Matchers
-
-NOT YET
 
 =head1 AUTHOR
 

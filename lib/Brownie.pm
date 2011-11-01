@@ -4,19 +4,10 @@ use 5.008001;
 use strict;
 use warnings;
 use Carp ();
-use HTML::Selector::XPath ();
 
 our $VERSION = '0.01';
 
 sub not_implemented { Carp::croak('Not implemented') }
-
-sub to_xpath {
-    my $locator = shift;
-    # taken from Web::Scraper
-    return $locator =~ m!^(?:/|id\()!
-        ? $locator # XPath
-        : HTML::Selector::XPath::selector_to_xpath($locator); # CSS to XPath
-}
 
 1;
 

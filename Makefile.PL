@@ -9,6 +9,7 @@ requires 'Carp';
 requires 'Class::Load';
 requires 'Class::Method::Modifiers';
 requires 'Sub::Install';
+requires 'Scalar::Util' => 1.14;
 requires 'URI';
 requires 'HTML::Selector::XPath';
 requires 'File::Slurp';
@@ -26,6 +27,7 @@ test_requires 'Test::Exception';
 test_requires 'Test::File';
 test_requires 'Exporter';
 test_requires 'File::Temp';
+test_requires 'File::Spec';
 
 recursive_author_tests 'xt';
 auto_set_repository;

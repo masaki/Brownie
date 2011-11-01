@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use parent 'Brownie::Node';
 
-use Brownie;
-
 ### Getter
 
 sub attr {
@@ -81,16 +79,85 @@ sub click {
 
 sub find_elements {
     my ($self, $locator) = @_;
-
-    my $xpath = Brownie::to_xpath($locator);
-    my @children = $self->driver->find_elements($xpath, -base => $self);
-
+    my @children = $self->driver->find_elements($locator, -base => $self);
     return @children ? @children : ();
 }
 
-sub find_element {
-    my ($self, $locator) = @_;
-    return shift @{[ $self->find_elements($locator) ]};
-}
-
 1;
+
+=head1 NAME
+
+Brownie::Node - base class of Brownie::Node series
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 IMPLEMENTED
+
+=over 4
+
+=item * C<attr>
+
+=item * C<value>
+
+=item * C<text>
+
+=item * C<tag_name>
+
+=item * C<is_displayed>
+
+=item * C<is_checked>
+
+=item * C<is_selected>
+
+=item * C<set($value)>
+
+=item * C<select>
+
+=item * C<unselect>
+
+=item * C<click>
+
+=item * C<find_elements($locator)>
+
+=back
+
+=head2 OVERRIDED
+
+=over 4
+
+=item * C<new(%args)>
+
+=item * C<driver>
+
+=item * C<native>
+
+=item * C<is_not_displayed>
+
+=item * C<is_not_checked>
+
+=item * C<is_not_selected>
+
+=item * C<find_element($locator)>
+
+=back
+
+=head1 AUTHOR
+
+NAKAGAWA Masaki E<lt>masaki@cpan.orgE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<Brownie::Node>, L<Brownie::Driver>, L<Brownie::Driver::Selenium>
+
+L<Selenium::Remote::WebElement>, L<Selenium::Remote::Driver>
+
+=cut
