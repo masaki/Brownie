@@ -68,6 +68,17 @@ sub to_checkbox {
     );
 }
 
+sub to_option {
+    my $locator = shift;
+    return map { sprintf $_, $locator } (
+        q!//option[@id='%s']!,
+        q!//option[@name='%s']!,
+        q!//option[text()='%s']!,
+        q!//option[@value='%s']!,
+        q!//option[@title='%s']!,
+    );
+}
+
 1;
 
 =head1 NAME

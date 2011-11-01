@@ -76,11 +76,43 @@ describe 'Brownie::Session#uncheck' => sub {
         ok $session->find_element("#$id")->is_not_checked;
     }
 
-    it 'should mark on checkbox' => sub {
+    it 'should mark out checkbox' => sub {
         uncheck_ok('input_checkbox3', 'input_checkbox3');
         uncheck_ok('Checkbox3 Value', 'input_checkbox3');
         uncheck_ok('checkbox3', 'input_checkbox3');
         uncheck_ok('checkbox2', 'input_checkbox2');
+    };
+};
+
+describe 'Brownie::Session#select' => sub {
+    sub select_ok {
+        my ($locator, $id) = @_;
+        $session->visit($httpd->endpoint);
+        ok $session->find_element("#$id")->is_not_selected;
+        $session->select($locator);
+        ok $session->find_element("#$id")->is_selected;
+    }
+
+    it 'should mark on option' => sub {
+        select_ok('select_option1', 'select_option1');
+        select_ok('3', 'select_option3');
+        select_ok('o4', 'select_option4');
+    };
+};
+
+describe 'Brownie::Session#unselect' => sub {
+    sub unselect_ok {
+        my ($locator, $id) = @_;
+        $session->visit($httpd->endpoint);
+        ok $session->find_element("#$id")->is_selected;
+        $session->unselect($locator);
+        ok $session->find_element("#$id")->is_not_selected;
+    }
+
+    it 'should mark out option in multiple selection' => sub {
+        unselect_ok('select_option5', 'select_option5');
+        unselect_ok('5', 'select_option5');
+        unselect_ok('o5', 'select_option5');
     };
 };
 

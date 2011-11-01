@@ -103,7 +103,19 @@ sub uncheck {
 }
 
 sub select {
-    my ($self, $value, %args) = @_;
+    my ($self, $locator) = @_;
+    for my $xpath (Brownie::XPath::to_option($locator)) {
+        eval { $self->_find_one($xpath)->select; return 1 } and return 1;
+    }
+    return 0;
+}
+
+sub unselect {
+    my ($self, $locator) = @_;
+    for my $xpath (Brownie::XPath::to_option($locator)) {
+        eval { $self->_find_one($xpath)->unselect; return 1 } and return 1;
+    }
+    return 0;
 }
 
 sub attach_file {
