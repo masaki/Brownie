@@ -8,6 +8,7 @@ use Class::Method::Modifiers;
 
 use Brownie::Driver;
 use Brownie::Node;
+use Brownie::XPath;
 
 sub new {
     my ($class, %args) = @_;
@@ -46,52 +47,27 @@ after 'visit' => sub {
 sub _find_one { shift->current_node->find_element(@_)  }
 sub _find_all { shift->current_node->find_elements(@_) }
 
+sub _scoped_click {
+    my ($self, @xpath) = @_;
+    for my $xpath (@xpath) {
+        eval { $self->_find_one($xpath)->click; return 1 } and return 1;
+    }
+    return 0;
+}
+
 sub click_link {
     my ($self, $locator) = @_;
-
-    my @xpath = (
-        Brownie::to_xpath($locator),
-        "//a[text()='$locator']",
-        "//a[\@title='$locator']",
-        "//a//img[\@alt='$locator']",
-    );
-
-    return $self->_click(@xpath);
+    return $self->_scoped_click(Brownie::XPath::to_link($locator));
 }
 
 sub click_button {
     my ($self, $locator) = @_;
-
-    my $types = q/(@type='submit' or @type='button' or @type='image')/;
-    my @xpath = (
-        Brownie::to_xpath($locator),
-        "//input[$types and \@value='$locator']",
-        "//input[$types and \@title='$locator']",
-        "//button[\@value='$locator']",
-        "//button[\@title='$locator']",
-        "//button[text()='$locator']",
-        "//input[\@type='image' and \@alt='$locator']",
-    );
-
-    return $self->_click(@xpath);
+    return $self->_scoped_click(Brownie::XPath::to_button($locator));
 }
 
 sub click_on {
     my ($self, $locator) = @_;
     return $self->click_link($locator) || $self->click_button($locator);
-}
-
-sub _click {
-    my ($self, @xpath) = @_;
-
-    for my $xpath (@xpath) {
-        if (my $element = $self->_find_one($xpath)) {
-            $element->click;
-            return 1;
-        }
-    }
-
-    return 0;
 }
 
 sub fill_in {

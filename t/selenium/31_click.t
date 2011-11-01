@@ -20,24 +20,16 @@ describe 'Brownie::Session#click_link' => sub {
         isnt $session->current_url => $url;
     }
 
-    it 'should click link with "#id" locator' => sub {
-        click_link_ok('#link_id');
+    it 'should click link with #id' => sub {
+        click_link_ok('link_id');
     };
-
-    it 'should click link with "//xpath" locator' => sub {
-        click_link_ok('//a[2]');
-        click_link_ok('//a[@href="/xpath"]');
-    };
-
-    it 'should click link with "a[text()]" locator' => sub {
+    it 'should click link with text()' => sub {
         click_link_ok('Text of Link');
     };
-
-    it 'should click link with "a[@title]" locator' => sub {
+    it 'should click link with @title' => sub {
         click_link_ok('Title of Link');
     };
-
-    it 'should click link with "a/img[@alt]" locator' => sub {
+    it 'should click link with a/img[@alt]' => sub {
         click_link_ok('Alt of Image');
     };
 };
@@ -51,31 +43,20 @@ describe 'Brownie::Session#click_button' => sub {
         isnt $session->current_url => $url;
     }
 
-    it 'should click button with "#id" locator' => sub {
-        my @id = qw(#input_submit #input_button #input_image #button_submit #button_button);
+    it 'should click button with #id' => sub {
+        my @id = qw(input_submit input_button input_image button_submit button_button);
         for my $id (@id) {
             click_button_ok($id);
         }
     };
 
-    it 'should click button with "//xpath" locator' => sub {
-        click_button_ok('//input[1]');
-        click_button_ok('//input[2]');
-    };
-
-    it 'should click button with "input[@title]" locator' => sub {
+    it 'should click button with input[@title] and input[@value]' => sub {
         click_button_ok('Input Submit Title');
-    };
-    it 'should click button with "input[@value]" locator' => sub {
         click_button_ok('Input Submit Value');
     };
-    it 'should click button with "button[@title]" locator' => sub {
+    it 'should click button with button[@title] and button[@value] and button[text()]' => sub {
         click_button_ok('Button Submit Title');
-    };
-    it 'should click button with "button[@value]" locator' => sub {
         click_button_ok('Button Submit Value');
-    };
-    it 'should click button with "button[text()]" locator' => sub {
         click_button_ok('Button Submit');
     };
 };
@@ -90,7 +71,7 @@ describe 'Brownie::Session#click_on' => sub {
     }
 
     it 'should click link' => sub {
-        click_ok('#link_id');
+        click_ok('link_id');
     };
 
     it 'should click button' => sub {
