@@ -53,10 +53,13 @@ sub test_httpd {
 
       <input type="hidden" id="input_hidden" value="Hidden Value"/>
 
-      <input type="checkbox" id="input_checkbox1" value="Checkbox1 Value"/>checkbox1
-      <input type="checkbox" id="input_checkbox2" value="Checkbox2 Value" checked="checked"/>checkbox2
-      <input type="radio" id="input_radio1" name="input_radio" value="Radio1 Value"/>radio1
-      <input type="radio" id="input_radio2" name="input_radio" value="Radio2 Value" checked="checked"/>radio2
+      <input type="checkbox" id="input_checkbox1" value="Checkbox1 Value"/><label for="input_checkbox1">checkbox1</label>
+      <label><input type="checkbox" id="input_checkbox2" value="Checkbox2 Value" checked="checked"/>checkbox2</label>
+
+      <input type="radio" id="input_radio1" name="input_radio" value="Radio1 Value"/><label for="input_radio1">radio1</label>
+      <label><input type="radio" id="input_radio2" name="input_radio" value="Radio2 Value" checked="checked"/>radio2</label>
+      <label><input type="radio" id="input_radio3" name="input_radio" value="Radio3 Value"/>radio3</label>
+
       <select id="select_single">
         <option value="1" id="select_option1">o1</option>
         <option value="2" id="select_option2" selected="selected">o2</option>

@@ -6,11 +6,11 @@ use HTML::Selector::XPath qw(selector_to_xpath);
 
 sub to_link {
     my $locator = shift;
-    return map { sprintf $_, $locator } qw(
-        //a[@id='%s']
-        //a[text()='%s']
-        //a[@title='%s']
-        //a//img[@alt='%s']
+    return map { sprintf $_, $locator } (
+        q!//a[@id='%s']!,
+        q!//a[text()='%s']!,
+        q!//a[@title='%s']!,
+        q!//a//img[@alt='%s']!,
     );
 }
 
@@ -41,6 +41,18 @@ sub to_text_field {
         q!//textarea[@id=//label[text()='%s']/@for]!,
         q!//label[text()='%s']//textarea!,
         q!//textarea[@title='%s']!,
+    );
+}
+
+sub to_radio {
+    my $locator = shift;
+    return map { sprintf $_, $locator } (
+        q!//input[@type='radio' and @id='%s']!,
+        q!//input[@type='radio' and @name='%s']!,
+        q!//input[@type='radio' and @id=//label[text()='%s']/@for]!,
+        q!//label[text()='%s']//input[@type='radio']!,
+        q!//input[@type='radio' and @value='%s']!,
+        q!//input[@type='radio' and @title='%s']!,
     );
 }
 

@@ -80,6 +80,10 @@ sub fill_in {
 
 sub choose {
     my ($self, $locator) = @_;
+    for my $xpath (Brownie::XPath::to_radio($locator)) {
+        eval { $self->_find_one($xpath)->select; return 1 } and return 1;
+    }
+    return 0;
 }
 
 sub check {
