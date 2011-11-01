@@ -43,6 +43,11 @@ after 'visit' => sub {
     $self->{scopes} = [ $self->document ];
 };
 
+sub _find {
+    my ($self, $locator) = @_;
+    $self->current_node->find_element($locator);
+}
+
 sub click_link {
     my ($self, $locator) = @_;
 
@@ -82,13 +87,37 @@ sub _click {
     my ($self, @xpath) = @_;
 
     for my $xpath (@xpath) {
-        if (my $element = $self->current_node->find_element($xpath)) {
+        if (my $element = $self->_find($xpath)) {
             $element->click;
             return 1;
         }
     }
 
     return 0;
+}
+
+sub fill_in {
+    my ($self, $locator, %args) = @_;
+}
+
+sub choose {
+    my ($self, $locator) = @_;
+}
+
+sub check {
+    my ($self, $locator) = @_;
+}
+
+sub uncheck {
+    my ($self, $locator) = @_;
+}
+
+sub select {
+    my ($self, $value, %args) = @_;
+}
+
+sub attach_file {
+    my ($self, $locator, $filename) = @_;
 }
 
 1;
