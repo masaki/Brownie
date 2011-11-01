@@ -43,15 +43,24 @@ Brownie::Driver - base class of Brownie::Driver series
 
 =head1 SYNOPSIS
 
-=head1 DESCRIPTION
+  use Brownie::Session;
+
+  my $session = Brownie::Session->new;
+  my $driver = $session->driver;
 
 =head1 METHODS
 
 =over 4
 
-=item * C<new( %args )>
+=item * C<new(%args)>
+
+Returns a new instance.
+
+  my $driver = Brownie::Driver->new(%args);
 
 =item * C<browser>
+
+Returns a driver specific browser object.
 
   my $browser = $driver->browser;
 
@@ -87,7 +96,7 @@ Returns current page's HTML source.
 
 =item * C<document>
 
-Returns current page's HTML root element
+Returns current page's HTML root element.
 
   my $element = $driver->document;
 
@@ -103,22 +112,18 @@ Find an element on the page, and return L<Brownie::Node> object.
 
   my $element = $driver->find_element($locator, %args)
 
-C<$locator> are:
-
-  * CSS Selector
-
-      my $element = $driver->find_element('#id');
-
-  * XPath
-
-      my $element = $driver->find_element('//a[1]');
+C<$locator> is string of "CSS Selector" (e.g. "#id") or "XPath" (e.g. "//a[1]").
 
 C<%args> are:
 
-  * C<-base>: Brownie::Node object where you want to start finding
+=over 8
 
-      my $parent = $driver->find_element('#where_to_parent');
-      my $child  = $driver->find_element('a', -base => $parent);
+=item * C<-base>: Brownie::Node object where you want to start finding
+
+  my $parent = $driver->find_element('#where_to_parent');
+  my $child  = $driver->find_element('a', -base => $parent);
+
+=back
 
 =item * C<find_elements($locator, %args)>
 
@@ -126,22 +131,18 @@ Find all elements on the page, and return L<Brownie::Node> object list.
 
   my @elements = $driver->find_elements($locator, %args)
 
-C<$locator> are:
-
-  * CSS Selector
-
-      my @elements = $driver->find_elements('a.navigation');
-
-  * XPath
-
-      my @elements = $driver->find_elements('//input[@type="text"]');
+C<$locator> is string of "CSS Selector" (e.g. "#id") or "XPath" (e.g. "//a[1]").
 
 C<%args> are:
 
-  * C<-base>: Brownie::Node object where you want to start finding
+=over 8
 
-      my $parent   = $driver->find_element('#where_to_parent');
-      my @children = $driver->find_elements('li', -base => $parent);
+=item * C<-base>: Brownie::Node object where you want to start finding
+
+  my $parent   = $driver->find_element('#where_to_parent');
+  my @children = $driver->find_elements('li', -base => $parent);
+
+=back
 
 =item * C<execute_script($javascript)>
 
