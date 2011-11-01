@@ -79,6 +79,17 @@ sub to_option {
     );
 }
 
+sub to_file_field {
+    my $locator = shift;
+    return map { sprintf $_, $locator } (
+        q!//input[@type='file' and @id='%s']!,
+        q!//input[@type='file' and @name='%s']!,
+        q!//input[@type='file' and @id=//label[text()='%s']/@for]!,
+        q!//label[text()='%s']//input[@type='file']!,
+        q!//input[@type='file' and @title='%s']!,
+    );
+}
+
 1;
 
 =head1 NAME

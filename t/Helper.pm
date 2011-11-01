@@ -53,6 +53,11 @@ sub test_httpd {
 
       <input type="hidden" id="input_hidden" value="Hidden Value"/>
 
+      <p>
+        <label for="input_file1">File Label1</label><input type="file" id="input_file1" value=""/>
+        <label>File Label2<input type="file" id="input_file2" value=""/></label>
+      </p>
+
       <input type="checkbox" id="input_checkbox1" value="Checkbox1 Value"/><label for="input_checkbox1">checkbox1</label>
       <label><input type="checkbox" id="input_checkbox2" value="Checkbox2 Value" checked="checked"/>checkbox2</label>
       <input type="checkbox" id="input_checkbox3" value="Checkbox3 Value" checked="checked"/><label for="input_checkbox3">checkbox3</label>

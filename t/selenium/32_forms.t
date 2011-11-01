@@ -7,6 +7,7 @@ BEGIN {
 
 use Brownie::Session;
 use t::Helper;
+use File::Spec;
 
 my $session = Brownie::Session->new(driver_name => 'Selenium');
 my $httpd = test_httpd;
@@ -113,6 +114,24 @@ describe 'Brownie::Session#unselect' => sub {
         unselect_ok('select_option5', 'select_option5');
         unselect_ok('5', 'select_option5');
         unselect_ok('o5', 'select_option5');
+    };
+};
+
+describe 'Brownie::Session#attach_file' => sub {
+    sub attach_ok {
+        my ($locator, $id) = @_;
+        $session->visit($httpd->endpoint);
+        ok !$session->find_element("#$id")->value;
+
+        my $path = File::Spec->rel2abs($0);
+        $session->attach_file($locator, $path);
+        is $session->find_element("#$id")->value => $path;
+    }
+
+    it 'should set path to input field' => sub {
+        attach_ok('input_file1', 'input_file1');
+        attach_ok('File Label1', 'input_file1');
+        attach_ok('File Label2', 'input_file2');
     };
 };
 

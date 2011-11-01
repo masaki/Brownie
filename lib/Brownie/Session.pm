@@ -120,6 +120,10 @@ sub unselect {
 
 sub attach_file {
     my ($self, $locator, $filename) = @_;
+    for my $xpath (Brownie::XPath::to_file_field($locator)) {
+        eval { $self->_find_one($xpath)->set($filename); return 1 } and return 1;
+    }
+    return 0;
 }
 
 1;
