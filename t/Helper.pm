@@ -40,8 +40,17 @@ sub test_httpd {
       <input type="button" id="input_button" title="Input Button Title" value="Input Button Value" onclick="javascript:location.href='/js'"/>
       <button type="button" id="button_button" title="Button Button Title" value="Button Button Value" onclick="javascript:location.href='/js'">Button Button</button>
 
-      <input type="text" id="input_text" value="Input Text Value"/>
-      <textarea id="textarea">Textarea Text</textarea>
+      <p>
+        <label for="input_text">Input Text Label</label>
+        <input type="text" id="input_text" value="Input Text Value" title="Input Text Title"/>
+      </p>
+      <p>
+        <label for="textarea">Textarea Label</label>
+        <textarea id="textarea">Textarea Text</textarea>
+      </p>
+      <p><label>Inner Input Password Lavel<input type="password" id="input_password" value=""/></label></p>
+      <p><label>Inner Textarea Lavel<textarea id="textarea2"></textarea></label></p>
+
       <input type="hidden" id="input_hidden" value="Hidden Value"/>
 
       <input type="checkbox" id="input_checkbox1" value="Checkbox1 Value"/>checkbox1

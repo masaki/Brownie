@@ -71,7 +71,11 @@ sub click_on {
 }
 
 sub fill_in {
-    my ($self, $locator, %args) = @_;
+    my ($self, $locator, $value) = @_;
+    for my $xpath (Brownie::XPath::to_text_field($locator)) {
+        eval { $self->_find_one($xpath)->set($value); return 1 } and return 1;
+    }
+    return 0;
 }
 
 sub choose {
@@ -180,7 +184,7 @@ It combines C<click_link> and C<click_button>.
 
 =over 4
 
-=item * C<fill_in($locator, -with => $value)>
+=item * C<fill_in($locator, $value)>
 
 =item * C<choose($locator)>
 
