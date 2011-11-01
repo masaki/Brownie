@@ -1,82 +1,83 @@
 =head1 NAME
 
-Brownie - Browser integration framework nspired by Capybara
+Brownie - Browser integration framework inspired by Capybara
 
 =head1 SYNOPSIS
 
-    use Brownie;
+=head2 OO-Style
+
+  use Test::More;
+  use Brownie::Session;
+
+  my $session = Brownie::Session->new(
+      driver_name => 'Selenium', # (e.g.) 'Selenium', 'Mechanize', ...
+      driver_args => { # some args for driver instantiation
+          selenium_host => 'localhost',
+          selenium_port => 4444,
+      },
+  );
+
+  $session->visit('http://example.com');
+  is $session->title => 'Example.com';
+
+  $session->fill_in('User Name' => 'brownie');
+  $session->fill_in('Email Address' => 'brownie@example.com');
+  $session->click_button('Login');
+  like $session->source => qr/Welcome (.+)/;
+
+  $session->fill_in(q => 'Brownie');
+  $session->click_on('Search');
+  like $session->title => qr/Search result of Brownie/i;
+
+  done_testing;
+
+=head2 DSL-Style
+
+NOT IMPLEMENTED YET
 
 =head1 DESCRIPTION
 
-Brownie is browser integrtion framework. It is inspired by Capybara at Ruby.
+Brownie is browser integrtion framework. It is inspired by Capybara (Ruby).
 
-=head1 DSL
-
-=head2 Navigation
+=head1 VOCABULARY
 
 =over 4
 
-=item visit( $url_or_path )
+=item * C<visit($url)>
 
-=item current_url
+=item * C<current_url>
 
-=item current_path
+=item * C<current_path>
 
-=back
+=item * C<title>
 
-=head2 Pages
+=item * C<source>
 
-=over 4
+=item * C<screenshot($filename)>
 
-=item title
+=item * C<click_link($locator)>
 
-=item source
+=item * C<click_button($locator)>
 
-=item screenshot( $file_name_to_save )
+=item * C<click_on($locator)>
 
-=back
+=item * C<fill_in($locator, $value)>
 
-=head2 Links and Buttons
+=item * C<choose($locator)>
 
-=over 4
+=item * C<check($locator)>
 
-=item click_link( $id_or_xpath_or_text )
+=item * C<uncheck($locator)>
 
-=item click_button( $id_or_xpath_or_text )
+=item * C<select($locator)>
 
-=item click_on( $id_or_xpath_or_text )
+=item * C<unselect($locator)>
 
-=back
+=item * C<attach_file($locator, $filename)>
 
-=head2 Forms
+=item * C<execute_script($javascript)>
 
-=over 4
-
-=item fill_in( $id_or_xpath_or_label, with => $value )
-
-=item choose( $id_or_xpath_or_label )
-
-=item check( $id_or_xpath_or_label )
-
-=item uncheck( $id_or_xpath_or_label )
-
-=item select( $value, from => $id_or_xpath_or_label )
-
-=back
-
-=head2 Matchers
-
-NOT YET
-
-=head2 Finder
-
-NOT YET
-
-=head2 Scripting
-
-=over 4
-
-=item execute_script( $javascript_code_string, @javascript_args )
+=item * C<evaluate_script($javascript)>
 
 =back
 
@@ -91,7 +92,9 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-Capybara
+L<Brownie::Session>
+
+L<Capybara|http://github.com/jnicklas/capybara>
 
 L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 

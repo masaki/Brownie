@@ -2,3 +2,4 @@ Revision history for Perl extension Brownie
 
 0.01
         - original version
+        - implements selenium driver
