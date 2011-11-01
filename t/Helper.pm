@@ -55,6 +55,8 @@ sub test_httpd {
 
       <input type="checkbox" id="input_checkbox1" value="Checkbox1 Value"/><label for="input_checkbox1">checkbox1</label>
       <label><input type="checkbox" id="input_checkbox2" value="Checkbox2 Value" checked="checked"/>checkbox2</label>
+      <input type="checkbox" id="input_checkbox3" value="Checkbox3 Value" checked="checked"/><label for="input_checkbox3">checkbox3</label>
+      <label><input type="checkbox" id="input_checkbox4" value="Checkbox4 Value"/>checkbox4</label>
 
       <input type="radio" id="input_radio1" name="input_radio" value="Radio1 Value"/><label for="input_radio1">radio1</label>
       <label><input type="radio" id="input_radio2" name="input_radio" value="Radio2 Value" checked="checked"/>radio2</label>

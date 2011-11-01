@@ -56,6 +56,18 @@ sub to_radio {
     );
 }
 
+sub to_checkbox {
+    my $locator = shift;
+    return map { sprintf $_, $locator } (
+        q!//input[@type='checkbox' and @id='%s']!,
+        q!//input[@type='checkbox' and @name='%s']!,
+        q!//input[@type='checkbox' and @id=//label[text()='%s']/@for]!,
+        q!//label[text()='%s']//input[@type='checkbox']!,
+        q!//input[@type='checkbox' and @value='%s']!,
+        q!//input[@type='checkbox' and @title='%s']!,
+    );
+}
+
 1;
 
 =head1 NAME

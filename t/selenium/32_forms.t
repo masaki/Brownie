@@ -50,4 +50,38 @@ describe 'Brownie::Session#choose' => sub {
     };
 };
 
+describe 'Brownie::Session#check' => sub {
+    sub check_ok {
+        my ($locator, $id) = @_;
+        $session->visit($httpd->endpoint);
+        ok $session->find_element("#$id")->is_not_checked;
+        $session->check($locator);
+        ok $session->find_element("#$id")->is_checked;
+    }
+
+    it 'should mark on checkbox' => sub {
+        check_ok('input_checkbox1', 'input_checkbox1');
+        check_ok('Checkbox1 Value', 'input_checkbox1');
+        check_ok('checkbox1', 'input_checkbox1');
+        check_ok('checkbox4', 'input_checkbox4');
+    };
+};
+
+describe 'Brownie::Session#uncheck' => sub {
+    sub uncheck_ok {
+        my ($locator, $id) = @_;
+        $session->visit($httpd->endpoint);
+        ok $session->find_element("#$id")->is_checked;
+        $session->uncheck($locator);
+        ok $session->find_element("#$id")->is_not_checked;
+    }
+
+    it 'should mark on checkbox' => sub {
+        uncheck_ok('input_checkbox3', 'input_checkbox3');
+        uncheck_ok('Checkbox3 Value', 'input_checkbox3');
+        uncheck_ok('checkbox3', 'input_checkbox3');
+        uncheck_ok('checkbox2', 'input_checkbox2');
+    };
+};
+
 done_testing;

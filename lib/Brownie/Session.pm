@@ -88,10 +88,18 @@ sub choose {
 
 sub check {
     my ($self, $locator) = @_;
+    for my $xpath (Brownie::XPath::to_checkbox($locator)) {
+        eval { $self->_find_one($xpath)->select; return 1 } and return 1;
+    }
+    return 0;
 }
 
 sub uncheck {
     my ($self, $locator) = @_;
+    for my $xpath (Brownie::XPath::to_checkbox($locator)) {
+        eval { $self->_find_one($xpath)->unselect; return 1 } and return 1;
+    }
+    return 0;
 }
 
 sub select {
