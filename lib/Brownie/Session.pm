@@ -43,10 +43,8 @@ after 'visit' => sub {
     $self->{scopes} = [ $self->document ];
 };
 
-sub _find {
-    my ($self, $locator) = @_;
-    $self->current_node->find_element($locator);
-}
+sub _find_one { shift->current_node->find_element(@_)  }
+sub _find_all { shift->current_node->find_elements(@_) }
 
 sub click_link {
     my ($self, $locator) = @_;
@@ -87,7 +85,7 @@ sub _click {
     my ($self, @xpath) = @_;
 
     for my $xpath (@xpath) {
-        if (my $element = $self->_find($xpath)) {
+        if (my $element = $self->_find_one($xpath)) {
             $element->click;
             return 1;
         }
