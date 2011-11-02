@@ -14,7 +14,7 @@ sub to_xpath {
 
 sub to_link {
     my $locator = shift;
-    return map { sprintf $_, $locator } (
+    return join '|', map { sprintf $_, $locator } (
         q!//a[@id='%s']!,
         q!//a[text()='%s']!,
         q!//a[@title='%s']!,
@@ -24,7 +24,7 @@ sub to_link {
 
 sub to_button {
     my $locator = shift;
-    return map { sprintf $_, $locator } (
+    return join '|', map { sprintf $_, $locator } (
         q!//input[(@type='submit' or @type='button' or @type='image') and @id='%s']!,
         q!//input[(@type='submit' or @type='button' or @type='image') and @value='%s']!,
         q!//input[(@type='submit' or @type='button' or @type='image') and @title='%s']!,
@@ -38,7 +38,7 @@ sub to_button {
 
 sub to_text_field {
     my $locator = shift;
-    return map { sprintf $_, $locator } (
+    return join '|', map { sprintf $_, $locator } (
         q!//input[(@type='text' or @type='password') and @id='%s']!,
         q!//input[(@type='text' or @type='password') and @name='%s']!,
         q!//input[(@type='text' or @type='password') and @id=//label[text()='%s']/@for]!,
@@ -54,7 +54,7 @@ sub to_text_field {
 
 sub to_radio {
     my $locator = shift;
-    return map { sprintf $_, $locator } (
+    return join '|', map { sprintf $_, $locator } (
         q!//input[@type='radio' and @id='%s']!,
         q!//input[@type='radio' and @name='%s']!,
         q!//input[@type='radio' and @id=//label[text()='%s']/@for]!,
@@ -66,7 +66,7 @@ sub to_radio {
 
 sub to_checkbox {
     my $locator = shift;
-    return map { sprintf $_, $locator } (
+    return join '|', map { sprintf $_, $locator } (
         q!//input[@type='checkbox' and @id='%s']!,
         q!//input[@type='checkbox' and @name='%s']!,
         q!//input[@type='checkbox' and @id=//label[text()='%s']/@for]!,
@@ -78,7 +78,7 @@ sub to_checkbox {
 
 sub to_option {
     my $locator = shift;
-    return map { sprintf $_, $locator } (
+    return join '|', map { sprintf $_, $locator } (
         q!//option[@id='%s']!,
         q!//option[@name='%s']!,
         q!//option[text()='%s']!,
@@ -89,7 +89,7 @@ sub to_option {
 
 sub to_file_field {
     my $locator = shift;
-    return map { sprintf $_, $locator } (
+    return join '|', map { sprintf $_, $locator } (
         q!//input[@type='file' and @id='%s']!,
         q!//input[@type='file' and @name='%s']!,
         q!//input[@type='file' and @id=//label[text()='%s']/@for]!,

@@ -45,24 +45,21 @@ after 'visit' => sub {
 };
 
 sub _find_one { shift->current_node->find_element(@_)  }
-sub _find_all { shift->current_node->find_elements(@_) }
 
-sub _scoped_click {
-    my ($self, @xpath) = @_;
-    for my $xpath (@xpath) {
+sub click_link {
+    my ($self, $locator) = @_;
+    for my $xpath (Brownie::XPath::to_link($locator)) {
         eval { $self->_find_one($xpath)->click; return 1 } and return 1;
     }
     return 0;
 }
 
-sub click_link {
-    my ($self, $locator) = @_;
-    return $self->_scoped_click(Brownie::XPath::to_link($locator));
-}
-
 sub click_button {
     my ($self, $locator) = @_;
-    return $self->_scoped_click(Brownie::XPath::to_button($locator));
+    for my $xpath (Brownie::XPath::to_button($locator)) {
+        eval { $self->_find_one($xpath)->click; return 1 } and return 1;
+    }
+    return 0;
 }
 
 sub click_on {
