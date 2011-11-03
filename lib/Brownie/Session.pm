@@ -129,9 +129,112 @@ sub attach_file {
 
 Brownie::Session - browser session class
 
+=head1 SYNOPSIS
+
+  use Test::More;
+  use Brownie::Session;
+
+  my $session = Brownie::Session->new(
+      driver_name => 'Selenium', # (e.g.) 'Selenium', 'Mechanize', ...
+      driver_args => { # some args for driver instantiation
+          selenium_host => 'localhost',
+          selenium_port => 4444,
+      },
+  );
+
+  $session->visit('http://example.com');
+  is $session->title => 'Example.com';
+
+  $session->fill_in('User Name' => 'brownie');
+  $session->fill_in('Email Address' => 'brownie@example.com');
+  $session->click_button('Login');
+  like $session->source => qr/Welcome (.+)/;
+
+  $session->fill_in(q => 'Brownie');
+  $session->click_on('Search');
+  like $session->title => qr/Search result of Brownie/i;
+
+  done_testing;
+
 =head1 METHODS
 
-=head2 Links and Buttons
+=over 4
+
+=item * C<new(%args)>
+
+  my $session = Brownie::Session->new(%args);
+
+C<%args> are:
+
+=over 8
+
+=item * C<driver_name>: loadable driver name (e.g. 'Selenium', 'Mechanize', ...)
+
+=item * C<driver_args>: some args to driver instantiation
+
+=back
+
+=back
+
+=head2 Driver Delegation
+
+=over 4
+
+=item * C<visit($url)>
+
+Go to $url.
+
+  $session->visit('http://example.com/');
+
+=item * C<current_url>
+
+Returns current page's URL.
+
+  my $url = $session->current_url;
+
+=item * C<current_path>
+
+Returns current page's path of URL.
+
+  my $path = $session->current_path;
+
+=item * C<title>
+
+Returns current page's <title> text.
+
+  my $title = $session->title;
+
+=item * C<source>
+
+Returns current page's HTML source.
+
+  my $source = $session->source;
+
+=item * C<screenshot($filename)>
+
+Takes current page's screenshot and saves to $filename as PNG.
+
+  $session->screenshot($filename);
+
+=item * C<execute_script($javascript)>
+
+Executes snippet of JavaScript into current page.
+
+  $session->execute_script('$("body").empty()');
+
+=item * C<evaluate_script($javascript)>
+
+Executes snipptes and returns result.
+
+  my $result = $session->evaluate_script('1 + 2');
+
+If specified DOM element, it returns WebElement object.
+
+  my $node = $session->evaluate_script('document.getElementById("foo")');
+
+=back
+
+=head2 Node Action
 
 =over 4
 
@@ -139,87 +242,67 @@ Brownie::Session - browser session class
 
 Finds and clicks specified link.
 
-  $driver->click_link($locator);
+  $session->click_link($locator);
 
-C<$locator> are:
-
-=over 8
-
-=item * C<#id>
-
-=item * C<//xpath>
-
-=item * C<text() of E<lt>aE<gt>>
-
-(e.g.) <a href="...">{locator}</a>
-
-=item * C<@title of E<lt>aE<gt>>
-
-(e.g.) <a title="{locator}">...</a>
-
-=item * C<child E<lt>imgE<gt> @alt>
-
-(e.g.) <a><img alt="{locator}"/></a>
-
-=back
+C<$locator>: id or text of link
 
 =item * C<click_button($locator)>
 
 Finds and clicks specified buttons.
 
-  $driver->click_button($locator);
+  $session->click_button($locator);
 
-C<$locator> are:
-
-=over 8
-
-=item * C<#id>
-
-=item * C<//xpath>
-
-=item * C<@value of E<lt>inputE<gt> / E<lt>buttonE<gt>>
-
-(e.g.) <input value="{locator}"/>
-
-=item * C<@title of E<lt>inputE<gt> / E<lt>buttonE<gt>>
-
-(e.g.) <button title="{locator}">...</button>
-
-=item * C<text() of E<lt>buttonE<gt>>
-
-(e.g.) <button>{locator}</button>
-
-=item * C<@alt of E<lt>input type="image"E<gt>>
-
-(e.g.) <input type="image" alt="{locator}"/>
-
-=back
+C<$locator>: id or value of button
 
 =item * C<click_on($locator)>
 
 Finds and clicks specified links or buttons.
 
-  $driver->click_on($locator);
+  $session->click_on($locator);
 
 It combines C<click_link> and C<click_button>.
 
-=back
-
-=head2 Forms
-
-=over 4
-
 =item * C<fill_in($locator, $value)>
+
+Sets a value to located field (input or textarea).
+
+  $session->fill_in($locator, $value);
 
 =item * C<choose($locator)>
 
+Selects a radio button.
+
+  $session->choose($locator);
+
 =item * C<check($locator)>
+
+Sets a checkbox to "checked"
+
+  $session->check($locator);
 
 =item * C<uncheck($locator)>
 
-=item * C<select($value, -from => $locator)>
+Unsets a checkbox from "checked"
+
+  $session->check($locator);
+
+=item * C<select($locator)>
+
+Selects an option.
+
+  $session->select($locator);
+
+=item * C<unselect($locator)>
+
+Unselects an option in multiple select.
+
+  $session->unselect($locator);
 
 =item * C<attach_file($locator, $filename)>
+
+Sets a path to file upload field.
+
+  $session->attach_file($locator, $filename);
 
 =back
 
