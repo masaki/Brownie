@@ -44,22 +44,22 @@ after 'visit' => sub {
     $self->{scopes} = [ $self->document ];
 };
 
-sub _find_one { shift->current_node->find_element(@_)  }
+sub _find     { $_[0]->current_node->find_element($_[1]) }
+sub _click    { $_[0]->_find($_[1])->click      }
+sub _set      { $_[0]->_find($_[1])->set($_[2]) }
+sub _select   { $_[0]->_find($_[1])->select     }
+sub _unselect { $_[0]->_find($_[1])->unselect   }
 
 sub click_link {
     my ($self, $locator) = @_;
-    for my $xpath (Brownie::XPath::to_link($locator)) {
-        eval { $self->_find_one($xpath)->click; return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_link($locator);
+    return eval { $self->_click($xpath); 1 };
 }
 
 sub click_button {
     my ($self, $locator) = @_;
-    for my $xpath (Brownie::XPath::to_button($locator)) {
-        eval { $self->_find_one($xpath)->click; return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_button($locator);
+    return eval { $self->_click($xpath); 1 };
 }
 
 sub click_on {
@@ -69,58 +69,44 @@ sub click_on {
 
 sub fill_in {
     my ($self, $locator, $value) = @_;
-    for my $xpath (Brownie::XPath::to_text_field($locator)) {
-        eval { $self->_find_one($xpath)->set($value); return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_text_field($locator);
+    return eval { $self->_set($xpath, $value); 1 };
 }
 
 sub choose {
     my ($self, $locator) = @_;
-    for my $xpath (Brownie::XPath::to_radio($locator)) {
-        eval { $self->_find_one($xpath)->select; return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_radio($locator);
+    return eval { $self->_select($xpath); 1 };
 }
 
 sub check {
     my ($self, $locator) = @_;
-    for my $xpath (Brownie::XPath::to_checkbox($locator)) {
-        eval { $self->_find_one($xpath)->select; return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_checkbox($locator);
+    return eval { $self->_select($xpath); 1 };
 }
 
 sub uncheck {
     my ($self, $locator) = @_;
-    for my $xpath (Brownie::XPath::to_checkbox($locator)) {
-        eval { $self->_find_one($xpath)->unselect; return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_checkbox($locator);
+    return eval { $self->_unselect($xpath); 1 };
 }
 
 sub select {
     my ($self, $locator) = @_;
-    for my $xpath (Brownie::XPath::to_option($locator)) {
-        eval { $self->_find_one($xpath)->select; return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_option($locator);
+    return eval { $self->_select($xpath); 1 };
 }
 
 sub unselect {
     my ($self, $locator) = @_;
-    for my $xpath (Brownie::XPath::to_option($locator)) {
-        eval { $self->_find_one($xpath)->unselect; return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_option($locator);
+    return eval { $self->_unselect($xpath); 1 };
 }
 
 sub attach_file {
     my ($self, $locator, $filename) = @_;
-    for my $xpath (Brownie::XPath::to_file_field($locator)) {
-        eval { $self->_find_one($xpath)->set($filename); return 1 } and return 1;
-    }
-    return 0;
+    my $xpath = Brownie::XPath::to_file_field($locator);
+    return eval { $self->_set($xpath, $filename); 1 };
 }
 
 1;
