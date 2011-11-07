@@ -7,7 +7,6 @@ all_from 'lib/Brownie.pm';
 requires 'parent';
 requires 'Carp';
 requires 'Class::Load';
-requires 'Class::Method::Modifiers';
 requires 'Sub::Install';
 requires 'Scalar::Util' => 1.14;
 requires 'URI';

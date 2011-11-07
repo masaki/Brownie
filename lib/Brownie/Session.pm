@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Class::Load;
 use Sub::Install;
-use Class::Method::Modifiers;
 
 use Brownie::Driver;
 use Brownie::Node;
@@ -36,13 +35,15 @@ for my $method (Brownie::Driver->PROVIDED_METHODS) {
     });
 }
 
-sub current_node { shift->{scopes}->[-1] }
-
-after 'visit' => sub {
+sub current_node {
     my $self = shift;
-    # clear scopes
-    $self->{scopes} = [ $self->document ];
-};
+    if (@{$self->{scopes}}) {
+        return $self->{scopes}->[-1];
+    }
+    else {
+        return $self->document;
+    }
+}
 
 sub _find     { $_[0]->current_node->find_element($_[1]) }
 sub _click    { $_[0]->_find($_[1])->click      }

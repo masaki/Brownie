@@ -1,5 +1,8 @@
 Revision history for Perl extension Brownie
 
+0.03
+        - refresh current_node every time
+
 0.02
         - add eg/google.pl
         - joining XPath
