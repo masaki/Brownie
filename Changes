@@ -1,6 +1,6 @@
 Revision history for Perl extension Brownie
 
-trunk
+0.02
         - add eg/google.pl
         - joining XPath
         - use selenium dr iver native find_element()
