@@ -77,6 +77,11 @@ sub click {
 
 ### Finder
 
+sub find_element {
+    my ($self, $locator) = @_;
+    return $self->driver->find_element($locator, -base => $self);
+}
+
 sub find_elements {
     my ($self, $locator) = @_;
     my @children = $self->driver->find_elements($locator, -base => $self);

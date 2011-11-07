@@ -78,6 +78,26 @@ sub screenshot {
 
 ### Finder
 
+sub find_element {
+    my ($self, $locator, %args) = @_;
+
+    my $element;
+    my $xpath = Brownie::XPath::to_xpath($locator);
+
+    if (my $base = $args{-base}) {
+        my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
+        $element = eval { $self->browser->find_child_element($node, ".$xpath") }; # abs2rel
+    }
+    else {
+        $element = eval { $self->browser->find_element($xpath) };
+    }
+
+    if ($element) {
+        $element = Brownie::Node::Selenium->new(driver => $self, native => $element);
+    }
+    return $element;
+}
+
 sub find_elements {
     my ($self, $locator, %args) = @_;
 
@@ -155,11 +175,13 @@ You can also set selenium-server parameters using C<%ENV>:
 
 =item * C<screenshot($filename)>
 
-=item * C<find_elements($locator)>
-
 =item * C<execute_script($javascript)>
 
 =item * C<evaluate_script($javascript)>
+
+=item * C<find_element($locator)>
+
+=item * C<find_elements($locator)>
 
 =back
 
@@ -169,7 +191,7 @@ You can also set selenium-server parameters using C<%ENV>:
 
 =item * C<document>
 
-=back * C<find_element($locator)>
+=back
 
 =head1 AUTHOR
 

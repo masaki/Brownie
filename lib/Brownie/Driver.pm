@@ -18,11 +18,6 @@ our @Scripting  = qw(execute_script evaluate_script);
 
 sub document { shift->find_element('/html') }
 
-sub find_element {
-    my ($self, $locator, %args) = @_;
-    return shift @{[ $self->find_elements($locator, %args) ]};
-}
-
 sub PROVIDED_METHODS {
     return (@Navigation, @Pages, @Finder, @Scripting);
 }
@@ -106,6 +101,22 @@ Takes current page's screenshot and saves to $filename as PNG.
 
   $driver->screenshot($filename);
 
+=item * C<execute_script($javascript)>
+
+Executes snippet of JavaScript into current page.
+
+  $driver->execute_script('$("body").empty()');
+
+=item * C<evaluate_script($javascript)>
+
+Executes snipptes and returns result.
+
+  my $result = $driver->evaluate_script('1 + 2');
+
+If specified DOM element, it returns WebElement object.
+
+  my $node = $driver->evaluate_script('document.getElementById("foo")');
+
 =item * C<find_element($locator, %args)>
 
 Find an element on the page, and return L<Brownie::Node> object.
@@ -143,22 +154,6 @@ C<%args> are:
   my @children = $driver->find_elements('li', -base => $parent);
 
 =back
-
-=item * C<execute_script($javascript)>
-
-Executes snippet of JavaScript into current page.
-
-  $driver->execute_script('$("body").empty()');
-
-=item * C<evaluate_script($javascript)>
-
-Executes snipptes and returns result.
-
-  my $result = $driver->evaluate_script('1 + 2');
-
-If specified DOM element, it returns WebElement object.
-
-  my $node = $driver->evaluate_script('document.getElementById("foo")');
 
 =back
 
