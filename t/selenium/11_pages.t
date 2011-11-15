@@ -1,13 +1,8 @@
 use Test::More;
+use Test::Brownie;
 use Test::File;
-
-BEGIN {
-    *describe = *context = *it = \&subtest;
-}
-
-use Brownie::Driver::Selenium;
 use File::Temp;
-use t::Helper;
+use Brownie::Driver::Selenium;
 
 my $driver = Brownie::Driver::Selenium->new;
 my $httpd = test_httpd;

@@ -1,14 +1,17 @@
-package t::Helper;
+package Test::Brownie::HTTPD;
 
 use strict;
 use warnings;
-use Exporter 'import';
+use parent 'Exporter';
 use Test::Fake::HTTPD;
+
+sub import {
+    __PACKAGE__->export_to_level(2, @_);
+}
 
 our @EXPORT = qw(test_httpd);
 
-sub test_httpd {
-    my $content = shift || <<'EOF';
+our $Content = <<'EOF';
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
@@ -91,6 +94,8 @@ sub test_httpd {
 </html>
 EOF
 
+sub test_httpd {
+    my $content = shift || $Content;
     run_http_server {
         my $req = shift;
         my $body = sprintf $content, $req->uri->path;

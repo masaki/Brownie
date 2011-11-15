@@ -1,12 +1,7 @@
 use Test::More;
-
-BEGIN {
-    *describe = *context = *it = \&subtest;
-}
-
-use Brownie::Session;
-use t::Helper;
+use Test::Brownie;
 use File::Spec;
+use Brownie::Session;
 
 my $session = Brownie::Session->new(driver_name => 'Selenium');
 my $httpd = test_httpd;
