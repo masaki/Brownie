@@ -1,5 +1,4 @@
 use Test::More;
-use Test::Flatten;
 
 BEGIN {
     *describe = *context = *it = \&subtest;
