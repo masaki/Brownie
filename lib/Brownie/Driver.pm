@@ -12,6 +12,7 @@ sub new {
 }
 
 our @Navigation = qw(visit current_url current_path);
+our @Headers    = qw(status_code response_headers);
 our @Pages      = qw(title source document screenshot);
 our @Finder     = qw(find_element find_elements);
 our @Scripting  = qw(execute_script evaluate_script);
@@ -19,7 +20,7 @@ our @Scripting  = qw(execute_script evaluate_script);
 sub document { shift->find_element('/html') }
 
 sub PROVIDED_METHODS {
-    return (@Navigation, @Pages, @Finder, @Scripting);
+    return (@Navigation, @Headers, @Pages, @Finder, @Scripting);
 }
 
 for ('browser', PROVIDED_METHODS) {
@@ -76,6 +77,18 @@ Returns current page's URL.
 Returns current page's path of URL.
 
   my $path = $driver->current_path;
+
+=item * C<status_code>
+
+Returns last request's HTTP status code.
+
+  my $code = $driver->status_code;
+
+=item * C<response_headers>
+
+Returns last request's HTTP response headers L<HTTP::Headers>.
+
+  my $headers = $driver->response_headers;
 
 =item * C<title>
 
