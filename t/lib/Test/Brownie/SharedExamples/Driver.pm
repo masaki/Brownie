@@ -48,18 +48,14 @@ sub driver_can_not_take_screenshot {
 }
 
 sub driver_support_script {
-    my ($driver, $httpd) = @_;
+    my $driver = shift;
 
     subtest 'execute valid script' => sub {
-        $driver->visit($httpd->endpoint);
-
         lives_ok { $driver->execute_script("document.title='execute_script'") };
         is $driver->title => 'execute_script';
     };
 
     subtest 'execute invalid script' => sub {
-        $driver->visit($httpd->endpoint);
-
         dies_ok { $driver->execute_script(__PACKAGE__) };
         dies_ok { $driver->execute_script('%') };
     };
