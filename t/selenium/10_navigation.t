@@ -1,31 +1,12 @@
 use Test::More;
 use Test::Brownie;
-use Test::Exception;
 use Brownie::Driver::Selenium;
 
 my $driver = Brownie::Driver::Selenium->new;
 my $httpd = test_httpd;
 
-describe 'Brownie::Driver::Selenium#visit' => sub {
-    it 'should not die when access to exist URL' => sub {
-        lives_ok { $driver->visit($httpd->endpoint) };
-    };
-};
-
-my $path = '/';
-
-describe 'Brownie::Driver::Selenium#current_url' => sub {
-    it 'should get URL' => sub {
-        $driver->visit($httpd->endpoint);
-        is $driver->current_url => $httpd->endpoint.$path; # redirect
-    };
-};
-
-describe 'Brownie::Driver::Selenium#current_path' => sub {
-    it 'should get path of URL' => sub {
-        $driver->visit($httpd->endpoint);
-        is $driver->current_path => $path;
-    };
+describe 'Brownie::Driver::Selenium [Navigation]' => sub {
+    driver_can_open_page($driver, $httpd);
 };
 
 done_testing;

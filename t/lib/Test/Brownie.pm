@@ -7,6 +7,7 @@ use Class::Load qw(load_class);
 our @Roles = qw(
     Test::Brownie::HTTPD
     Test::Brownie::Descriptive
+    Test::Brownie::SharedExamples::Driver
 );
 
 sub import {

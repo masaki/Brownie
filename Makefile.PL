@@ -20,7 +20,7 @@ requires 'Selenium::Remote::Driver';
 tests 't/*.t';
 test_requires 'Test::More' => 0.98;
 test_requires 'Test::UseAllModules';
-test_requires 'Test::Flatten';
+test_requires 'Test::Data';
 test_requires 'Test::Fake::HTTPD' => 0.03;
 test_requires 'Test::Exception';
 test_requires 'Test::File';
