@@ -1,9 +1,5 @@
 use Test::More;
-
-BEGIN {
-    *describe = *context = *it = \&subtest;
-}
-
+use Test::Brownie;
 use Brownie::Driver::Selenium;
 
 describe 'Brownie::Driver::Selenium#browser' => sub {
