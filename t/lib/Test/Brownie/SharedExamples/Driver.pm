@@ -18,7 +18,7 @@ sub driver_can_open_page {
 
     like $driver->current_url  => qr!@{[$httpd->endpoint]}/?!;
     like $driver->current_path => qr!^/?$!;
-};
+}
 
 sub driver_can_read_html_contents {
     my $driver = shift;
@@ -91,7 +91,7 @@ sub driver_can_find_elements_with_xpath {
         lives_ok { @elems = $driver->find_elements('//span[@class="noexist"]') };
         is scalar(@elems) => 0;
     };
-};
+}
 
 sub driver_can_find_elements_with_selector {
     my $driver = shift;
@@ -109,7 +109,7 @@ sub driver_can_find_elements_with_selector {
         lives_ok { @elems = $driver->find_elements('span.noexist') };
         is scalar(@elems) => 0;
     };
-};
+}
 
 our @EXPORT;
 {
