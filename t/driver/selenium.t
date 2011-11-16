@@ -1,6 +1,7 @@
 use Test::More;
 use Test::Brownie;
 use Brownie::Driver::Selenium;
+use Brownie::Node::Selenium;
 
 describe 'Brownie::Driver::Selenium' => sub {
     my $driver = Brownie::Driver::Selenium->new;
@@ -22,7 +23,9 @@ describe 'Brownie::Driver::Selenium' => sub {
         driver_support_navigation($driver, $httpd);
     };
 
-    context 'HTTP' => sub {
+    $driver->visit($httpd->endpoint);
+
+    context 'Headers' => sub {
         driver_not_support_status_code($driver);
         driver_not_support_header_access($driver);
     };
@@ -39,6 +42,21 @@ describe 'Brownie::Driver::Selenium' => sub {
     context 'Finder' => sub {
         driver_support_xpath_finder($driver);
         driver_support_css_selector_finder($driver);
+    };
+};
+
+describe 'Brownie::Node::Selenium' => sub {
+    my $driver = Brownie::Driver::Selenium->new;
+    my $httpd = test_httpd;
+
+    $driver->visit($httpd->endpoint);
+
+    context 'Accessor' => sub {
+        node_support_read_access($driver);
+    };
+
+    context 'Finder' => sub {
+        node_support_inner_finder($driver);
     };
 };
 

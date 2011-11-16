@@ -8,6 +8,7 @@ our @Roles = qw(
     Test::Brownie::HTTPD
     Test::Brownie::Descriptive
     Test::Brownie::SharedExamples::Driver
+    Test::Brownie::SharedExamples::Node
 );
 
 sub import {
