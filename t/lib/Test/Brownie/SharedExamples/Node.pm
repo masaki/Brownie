@@ -44,6 +44,81 @@ sub node_support_inner_finder {
     };
 }
 
+sub node_support_state_check {
+    my $driver = shift;
+
+    ok $driver->find_element('h1')->is_displayed;
+    ok $driver->find_element('#input_hidden')->is_not_displayed;
+    ok $driver->find_element('#input_checkbox2')->is_checked;
+    ok $driver->find_element('#input_checkbox1')->is_not_checked;
+    ok $driver->find_element('#input_radio2')->is_selected;
+    ok $driver->find_element('#input_radio1')->is_not_selected;
+}
+
+sub node_support_form_action {
+    my $driver = shift;
+
+    subtest 'check on checkbox' => sub {
+        my $checkbox = $driver->find_element('#input_checkbox1');
+        ok $checkbox->is_not_checked;
+        $checkbox->select;
+        ok $checkbox->is_checked;
+    };
+
+    subtest 'select on radio button' => sub {
+        my $radio = $driver->find_element('#input_radio1');
+        ok $radio->is_not_selected;
+        $radio->select;
+        ok $radio->is_selected;
+    };
+
+    subtest 'select on option' => sub {
+        my $option = $driver->find_element('#select_option1');
+        ok $option->is_not_selected;
+        $option->select;
+        ok $option->is_selected;
+    };
+
+    subtest 'check out checkbox' => sub {
+        my $checkbox = $driver->find_element('#input_checkbox2');
+        ok $checkbox->is_checked;
+        $checkbox->unselect;
+        ok $checkbox->is_not_checked;
+    };
+
+    subtest 'select out multiple option' => sub {
+        my $option = $driver->find_element('#select_option5');
+        ok $option->is_selected;
+        $option->unselect;
+        ok $option->is_not_selected;
+    };
+
+    subtest 'set text' => sub {
+        my $harness = sub {
+            my ($locator, $old) = @_;
+            my $elem = $driver->find_element($locator);
+
+            is $elem->value => $old;
+            my $new = $old . time;
+            $elem->set($new);
+            is $elem->value => $new;
+        };
+
+        $harness->('#input_text', 'Input Text Value');
+        $harness->('#textarea', 'Textarea Text');
+    };
+
+    subtest 'click elements' => sub {
+        my $link = $driver->find_element('#link_id');
+        $link->click;
+        is $driver->current_path => '/id';
+
+        my $button = $driver->find_element('#input_submit');
+        $button->click;
+        is $driver->current_path => '/form';
+    };
+}
+
 our @EXPORT;
 {
     my $class = __PACKAGE__;
