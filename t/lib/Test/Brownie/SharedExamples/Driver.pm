@@ -11,7 +11,7 @@ use File::Temp;
 
 sub import { __PACKAGE__->export_to_level(2, @_) }
 
-sub driver_can_open_page {
+sub driver_support_navigation {
     my ($driver, $httpd) = @_;
 
     lives_ok { $driver->visit($httpd->endpoint) };
@@ -20,7 +20,27 @@ sub driver_can_open_page {
     like $driver->current_path => qr!^/?$!;
 }
 
-sub driver_can_read_html_contents {
+sub driver_support_status_code {
+    my $driver = shift;
+    lives_ok { $driver->status_code };
+}
+
+sub driver_not_support_status_code {
+    my $driver = shift;
+    dies_ok { $driver->status_code };
+}
+
+sub driver_support_header_access {
+    my $driver = shift;
+    lives_ok { $driver->response_headers };
+}
+
+sub driver_not_support_header_access {
+    my $driver = shift;
+    dies_ok { $driver->response_headers };
+}
+
+sub driver_support_html_parse {
     my $driver = shift;
 
     is $driver->title => 'test';
@@ -30,7 +50,7 @@ sub driver_can_read_html_contents {
     like $data => qr!<title>test</title>!;
 }
 
-sub driver_can_take_screenshot {
+sub driver_support_screenshot {
     my $driver = shift;
 
     my $path = File::Temp->new(UNLINK => 1, suffix => '.png')->filename;
@@ -43,8 +63,9 @@ sub driver_can_take_screenshot {
     unlink $path;
 }
 
-sub driver_can_not_take_screenshot {
-    # TODO: implements
+sub driver_not_support_screenshot {
+    my $driver = shift;
+    dies_ok { $driver->screenshot };
 }
 
 sub driver_support_script {
@@ -72,10 +93,12 @@ sub driver_support_script {
 }
 
 sub driver_not_support_script {
-    # TODO: implements
+    my $driver = shift;
+    dies_ok { $driver->execute_script("document.title='execute_script'") };
+    dies_ok { $driver->evaluate_script('1 + 2') };
 }
 
-sub driver_can_find_elements_with_xpath {
+sub driver_support_xpath_finder {
     my $driver = shift;
 
     subtest 'with xpath' => sub {
@@ -93,7 +116,7 @@ sub driver_can_find_elements_with_xpath {
     };
 }
 
-sub driver_can_find_elements_with_selector {
+sub driver_support_css_selector_finder {
     my $driver = shift;
 
     subtest 'with css selector' => sub {
