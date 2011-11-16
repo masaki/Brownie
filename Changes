@@ -1,5 +1,9 @@
 Revision history for Perl extension Brownie
 
+0.04
+        - added status_code() and response_headers() to driver I/F
+        - tests based on shared examples
+
 0.03
         - refresh current_node every time
 
