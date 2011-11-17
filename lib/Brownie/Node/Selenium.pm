@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use parent 'Brownie::Node';
 
-### Getter
+### Attribute
 
 sub attr {
     my ($self, $name) = @_;
@@ -26,7 +26,20 @@ sub tag_name {
     return lc $self->native->get_tag_name;
 }
 
-### Query
+### Finder
+
+sub find_element {
+    my ($self, $locator) = @_;
+    return $self->driver->find_element($locator, -base => $self);
+}
+
+sub find_elements {
+    my ($self, $locator) = @_;
+    my @children = $self->driver->find_elements($locator, -base => $self);
+    return @children ? @children : ();
+}
+
+### Action
 
 sub is_displayed {
     my $self = shift;
@@ -42,8 +55,6 @@ sub is_checked {
     my $self = shift;
     return $self->native->is_selected;
 }
-
-### Setter
 
 sub set {
     my ($self, $value) = @_;
@@ -68,35 +79,20 @@ sub unselect {
     $self->click if $self->is_selected;
 }
 
-### Action
-
 sub click {
     my $self = shift;
     $self->native->click;
-}
-
-### Finder
-
-sub find_element {
-    my ($self, $locator) = @_;
-    return $self->driver->find_element($locator, -base => $self);
-}
-
-sub find_elements {
-    my ($self, $locator) = @_;
-    my @children = $self->driver->find_elements($locator, -base => $self);
-    return @children ? @children : ();
 }
 
 1;
 
 =head1 NAME
 
-Brownie::Node - base class of Brownie::Node series
-
-=head1 SYNOPSIS
+Brownie::Node::Selenium
 
 =head1 DESCRIPTION
+
+Please see L<Brownie::Node> document.
 
 =head1 METHODS
 
@@ -126,6 +122,8 @@ Brownie::Node - base class of Brownie::Node series
 
 =item * C<click>
 
+=item * C<find_element($locator)>
+
 =item * C<find_elements($locator)>
 
 =back
@@ -145,8 +143,6 @@ Brownie::Node - base class of Brownie::Node series
 =item * C<is_not_checked>
 
 =item * C<is_not_selected>
-
-=item * C<find_element($locator)>
 
 =back
 

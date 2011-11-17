@@ -88,7 +88,8 @@ sub find_element {
 
     if (my $base = $args{-base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
-        $element = eval { $self->browser->find_child_element($node, ".$xpath") }; # abs2rel
+        $xpath = ".$xpath" unless $xpath =~ /^\./;
+        $element = eval { $self->browser->find_child_element($node, $xpath) }; # abs2rel
     }
     else {
         $element = eval { $self->browser->find_element($xpath) };
@@ -105,7 +106,8 @@ sub find_elements {
 
     if (my $base = $args{-base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
-        @elements = eval { $self->browser->find_child_elements($node, ".$xpath") }; # abs2rel
+        $xpath = ".$xpath" unless $xpath =~ /^\./;
+        @elements = eval { $self->browser->find_child_elements($node, $xpath) }; # abs2rel
     }
     else {
         @elements = eval { $self->browser->find_elements($xpath) };

@@ -18,6 +18,7 @@ our $Content = <<'EOF';
     <title>test</title>
   </head>
   <body>
+    <script type="text/javascript">var n = 1 + 2;</script>
     <h1 id="current_path">%s</h1>
 
     <ul>

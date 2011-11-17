@@ -16,15 +16,14 @@ sub native { shift->{native} }
 
 our @Accessor = qw(attr value text tag_name);
 our @Finder   = qw(find_element find_elements);
-
-our @Action = qw(click set select unselect);
-push @Action, qw(is_displayed is_not_displayed is_selected is_not_selected is_checked is_not_checked);
+our @State    = qw(is_displayed is_not_displayed is_selected is_not_selected is_checked is_not_checked);
+our @Action   = qw(click set select unselect);
 
 sub is_not_displayed { !shift->is_displayed }
 sub is_not_selected  { !shift->is_selected  }
 sub is_not_checked   { !shift->is_checked   }
 
-our @Method = (@Accessor, @Finder, @Action);
+our @Method = (@Accessor, @Finder, @State, @Action);
 for (@Method) {
     next if __PACKAGE__->can($_);
     Sub::Install::install_sub({
