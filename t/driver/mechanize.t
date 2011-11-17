@@ -40,7 +40,6 @@ describe 'Brownie::Driver::Mechanize' => sub {
     };
 };
 
-=comment
 describe 'Brownie::Node::Mechanize' => sub {
     my $driver = Brownie::Driver::Mechanize->new;
     my $httpd = test_httpd;
@@ -55,14 +54,20 @@ describe 'Brownie::Node::Mechanize' => sub {
         node_support_inner_finder($driver);
     };
 
+    context 'State' => sub {
+        $driver->visit($httpd->endpoint);
+        node_support_visibility_check($driver);
+        node_support_form_control_check($driver);
+    };
+
     context 'Action' => sub {
         $driver->visit($httpd->endpoint);
-        node_support_state_check($driver);
-
-        $driver->visit($httpd->endpoint);
-        node_support_form_action($driver);
+        node_support_text_action($driver);
+        node_support_click_action($driver);
+        node_support_checkbox_action($driver);
+        node_support_radio_action($driver);
+        node_support_select_action($driver);
     };
 };
-=cut
 
 done_testing;
