@@ -6,9 +6,33 @@ use parent 'Brownie::Node';
 
 sub _mech { shift->driver->browser }
 
+sub _is_link {
+    my $self = shift;
+    return $self->tag_name eq 'a' and $self->attr('href');
+}
+
+sub _is_button {
+    my $self = shift;
+    my $tag  = $self->tag_name;
+    my $type = $self->attr('type') || '';
+    return 1 if $tag eq 'input'  and ($type eq 'submit' or $type eq 'image');
+    return 1 if $tag eq 'button' and (!$type or $type eq 'submit');
+    return 0;
+}
+
+sub _is_checkbox {
+    my $self = shift;
+    return $self->tag_name eq 'input' and $self->attr('type') and $self->attr('type') eq 'checkbox';
+}
+
+sub _is_radio {
+    my $self = shift;
+    return $self->tag_name eq 'input' and $self->attr('type') and $self->attr('type') eq 'radio';
+}
+
 sub attr {
     my ($self, $name) = @_;
-    return $self->native->attr($name);
+    return $self->native->attr($name) || '';
 }
 
 sub value {
@@ -77,13 +101,13 @@ sub select {
     my $mech = $self->_mech;
 
     if ($self->_is_checkbox) {
-        return $mech->tick($self->attr('name'), $self->value);
+        $mech->tick($self->attr('name'), $self->value) if $self->is_not_selected;
     }
     elsif ($self->_is_radio) {
-        return $mech->set_visible([ radio => $self->value ]);
+        $mech->set_visible([ radio => $self->value ]) if $self->is_not_selected;
     }
     elsif ($self->tag_name eq 'option') {
-        return $mech->select($self->attr('name'), $self->value);
+        $mech->select($self->attr('name'), $self->value) if $self->is_not_selected;
     }
 }
 
@@ -92,35 +116,11 @@ sub unselect {
     my $mech = $self->_mech;
 
     if ($self->_is_checkbox) {
-        return $mech->untick($self->attr('name'), $self->value);
+        $mech->untick($self->attr('name'), $self->value) if $self->is_selected;
     }
     elsif ($self->tag_name eq 'option') {
         # TODO: check if multiple select options
     }
-}
-
-sub _is_link {
-    my $self = shift;
-    return $self->tag_name eq 'a' and $self->attr('href');
-}
-
-sub _is_button {
-    my $self = shift;
-    my $tag  = $self->tag_name;
-    my $type = $self->attr('type') || '';
-    return 1 if $tag eq 'input'  and ($type eq 'submit' or $type eq 'image');
-    return 1 if $tag eq 'button' and (!$type or $type eq 'submit');
-    return 0;
-}
-
-sub _is_checkbox {
-    my $self = shift;
-    return $self->tag_name eq 'input' and $self->attr('type') and $self->attr('type') eq 'checkbox';
-}
-
-sub _is_radio {
-    my $self = shift;
-    return $self->tag_name eq 'input' and $self->attr('type') and $self->attr('type') eq 'radio';
 }
 
 sub click {
