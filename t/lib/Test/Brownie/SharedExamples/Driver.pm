@@ -112,8 +112,8 @@ sub driver_support_xpath_finder {
         is scalar($driver->find_elements('//li')) => 5;
         is scalar($driver->find_elements('//li[@class="even"]')) => 2;
 
-        is $driver->find_element('//li')->native->get_text => '1';
-        is $driver->find_element('//li[@class="even"]')->native->get_text => '2';
+        is $driver->find_element('//li')->text => '1';
+        is $driver->find_element('//li[@class="even"]')->text => '2';
     };
 
     subtest 'return empty array when not exist locator was given' => sub {
@@ -130,8 +130,8 @@ sub driver_support_css_selector_finder {
         is scalar($driver->find_elements('li')) => 5;
         is scalar($driver->find_elements('li.even')) => 2;
 
-        is $driver->find_element('li')->native->get_text => '1';
-        is $driver->find_element('li.even')->native->get_text => '2';
+        is $driver->find_element('li')->text => '1';
+        is $driver->find_element('li.even')->text => '2';
     };
 
     subtest 'return empty array when not exist locator was given' => sub {
