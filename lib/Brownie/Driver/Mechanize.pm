@@ -6,6 +6,7 @@ use parent 'Brownie::Driver';
 use WWW::Mechanize;
 use HTML::TreeBuilder::XPath;
 use constant HAS_LIBXML => eval { require HTML::TreeBuilder::LibXML; 1 };
+use Scalar::Util qw(blessed);
 
 use Brownie;
 use Brownie::XPath;
@@ -89,7 +90,8 @@ sub find_elements {
 
     if (my $base = $args{-base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
-        @elements = $node->findnodes(".$xpath"); # abs2rel
+        $xpath = ".$xpath" unless $xpath =~ /^\./;
+        @elements = $node->findnodes($xpath); # abs2rel
     }
     else {
         @elements = $self->_root->findnodes($xpath);
