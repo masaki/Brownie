@@ -1,15 +1,15 @@
 use Test::More;
 use Test::Brownie;
-use Brownie::Driver::Selenium;
-use Brownie::Node::Selenium;
+use Brownie::Driver::Mechanize;
+use Brownie::Node::Mechanize;
 
-describe 'Brownie::Driver::Selenium' => sub {
-    my $driver = Brownie::Driver::Selenium->new;
+describe 'Brownie::Driver::Mechanize' => sub {
+    my $driver = Brownie::Driver::Mechanize->new;
     my $httpd = test_httpd;
 
     context 'Browser' => sub {
         ok $driver->browser;
-        isa_ok $driver->browser => 'Selenium::Remote::Driver';
+        isa_ok $driver->browser => 'WWW::Mechanize';
     };
 
     context 'Navigation' => sub {
@@ -18,19 +18,19 @@ describe 'Brownie::Driver::Selenium' => sub {
 
     context 'Headers' => sub {
         $driver->visit($httpd->endpoint);
-        driver_not_support_status_code($driver);
-        driver_not_support_header_access($driver);
+        driver_support_status_code($driver);
+        driver_support_header_access($driver);
     };
 
     context 'Pages' => sub {
         $driver->visit($httpd->endpoint);
         driver_support_html_parse($driver);
-        driver_support_screenshot($driver);
+        driver_not_support_screenshot($driver);
     };
 
     context 'Scripting' => sub {
         $driver->visit($httpd->endpoint);
-        driver_support_script($driver);
+        driver_not_support_script($driver);
     };
 
     context 'Finder' => sub {
@@ -40,8 +40,9 @@ describe 'Brownie::Driver::Selenium' => sub {
     };
 };
 
-describe 'Brownie::Node::Selenium' => sub {
-    my $driver = Brownie::Driver::Selenium->new;
+=comment
+describe 'Brownie::Node::Mechanize' => sub {
+    my $driver = Brownie::Driver::Mechanize->new;
     my $httpd = test_httpd;
 
     context 'Accessor' => sub {
@@ -62,5 +63,6 @@ describe 'Brownie::Node::Selenium' => sub {
         node_support_form_action($driver);
     };
 };
+=cut
 
 done_testing;
