@@ -22,7 +22,8 @@ sub driver_support_navigation {
 
 sub driver_support_status_code {
     my $driver = shift;
-    lives_ok { $driver->status_code };
+
+    is $driver->status_code => '200';
 }
 
 sub driver_not_support_status_code {
@@ -32,7 +33,13 @@ sub driver_not_support_status_code {
 
 sub driver_support_header_access {
     my $driver = shift;
-    lives_ok { $driver->response_headers };
+
+    my $headers = $driver->response_headers;
+    isa_ok $headers => 'HTTP::Headers';
+
+    my $ct = $headers->header('Content-Type');
+    like $ct => qr!text/html!i;
+    like $ct => qr/charset=utf-8/i;
 }
 
 sub driver_not_support_header_access {

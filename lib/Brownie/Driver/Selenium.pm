@@ -12,6 +12,8 @@ use MIME::Base64 qw(decode_base64);
 use Brownie::XPath;
 use Brownie::Node::Selenium;
 
+(our $NodeClass = __PACKAGE__) =~ s/Driver/Node/;
+
 sub new {
     my ($class, %args) = @_;
 
@@ -92,10 +94,7 @@ sub find_element {
         $element = eval { $self->browser->find_element($xpath) };
     }
 
-    if ($element) {
-        $element = Brownie::Node::Selenium->new(driver => $self, native => $element);
-    }
-    return $element;
+    return $element ? $NodeClass->new(driver => $self, native => $element) : undef;
 }
 
 sub find_elements {
@@ -112,9 +111,7 @@ sub find_elements {
         @elements = eval { $self->browser->find_elements($xpath) };
     }
 
-    return scalar(@elements) > 0 ? map {
-        Brownie::Node::Selenium->new(driver => $self, native => $_);
-    } @elements : ();
+    return @elements ? map { $NodeClass->new(driver => $self, native => $_) } @elements : ();
 }
 
 ### Scripting
@@ -137,7 +134,7 @@ Brownie::Driver::Selenium - Selenium WebDriver bridge implementation
 
 =head1 DESCRIPTION
 
-Please see L<Brownie::Driver::Base> document.
+Please see L<Brownie::Driver> document.
 
 =head1 METHODS
 
@@ -190,6 +187,16 @@ You can also set selenium-server parameters using C<%ENV>:
 =over 4
 
 =item * C<document>
+
+=back
+
+=head2 NOT SUPPORTED
+
+=over 4
+
+=item * C<status_code>
+
+=item * C<response_headers>
 
 =back
 
