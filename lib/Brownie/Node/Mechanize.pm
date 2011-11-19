@@ -4,30 +4,66 @@ use strict;
 use warnings;
 use parent 'Brownie::Node';
 
-sub _mech { shift->driver->browser }
+# shortcut
+for my $name (qw(id name type)) {
+    no strict 'refs';
+    *{"_${name}"} = sub { return shift->attr($name) || '' };
+}
+
+sub _selector {
+    my $self = shift;
+
+    my $selector = '';
+    if (my $id = $self->_id) {
+        $selector = "#$id";
+    }
+    elsif (my $name = $self->_name) {
+        $selector = "^$name";
+    }
+
+    return $selector;
+}
 
 sub _is_link {
     my $self = shift;
-    return $self->tag_name eq 'a' and $self->attr('href');
+    return $self->tag_name eq 'a' && $self->attr('href');
+}
+
+sub _is_text_field {
+    my $self = shift;
+    return 1 if $self->tag_name eq 'textarea';
+    return 1 if $self->tag_name eq 'input' && $self->_type =~ /^(?:text|password|hidden)$/i;
+    return 0;
 }
 
 sub _is_button {
     my $self = shift;
-    my $tag  = $self->tag_name;
-    my $type = $self->attr('type') || '';
-    return 1 if $tag eq 'input'  and ($type eq 'submit' or $type eq 'image');
-    return 1 if $tag eq 'button' and (!$type or $type eq 'submit');
+    return 1 if $self->tag_name eq 'input'  && $self->_type =~ /^(?:submit|image)$/i;
+    return 1 if $self->tag_name eq 'button' && (!$self->_type || $self->_type eq 'submit');
     return 0;
 }
 
 sub _is_checkbox {
     my $self = shift;
-    return $self->tag_name eq 'input' and $self->attr('type') and $self->attr('type') eq 'checkbox';
+    return $self->tag_name eq 'input' && $self->_type eq 'checkbox';
 }
 
 sub _is_radio {
     my $self = shift;
-    return $self->tag_name eq 'input' and $self->attr('type') and $self->attr('type') eq 'radio';
+    return $self->tag_name eq 'input' && $self->_type eq 'radio';
+}
+
+sub _is_option {
+    my $self = shift;
+    return $self->tag_name eq 'option';
+}
+
+sub _is_in_multiple_select {
+    my $self = shift;
+
+    return $self->native->look_up(sub {
+        return lc($_[0]->tag) eq 'select' && $_[0]->attr('multiple');
+    });
 }
 
 sub attr {
@@ -37,7 +73,7 @@ sub attr {
 
 sub value {
     my $self = shift;
-    return $self->tag_name eq 'textarea' ? $self->text : $self->attr('value');
+    return $self->_mech->value($self->_selector) || '';
 }
 
 sub text {
@@ -61,17 +97,43 @@ sub find_elements {
     return @children ? @children : ();
 }
 
-sub is_displayed {
+sub _mech { return shift->driver->browser }
+
+sub _is_form_control {
+    my $self = shift;
+    return $self->_is_text_field
+        || $self->_is_button
+        || $self->_is_checkbox
+        || $self->_is_radio
+        || $self->_is_option;
+}
+
+sub _as_html_form {
+    my $self = shift;
+
+    if ($self->_is_form_control) {
+        for my $form ($self->_mech->forms) {
+            my $input = $form->find_input($self->_selector);
+            return $input if $input;
+        }
+    }
+
+    return;
+}
+
+sub is_displayed { !shift->is_not_displayed }
+
+sub is_not_displayed {
     my $self = shift;
 
     my @hidden = $self->native->look_up(sub {
-        return 1 if $_[0]->attr('style') and $_[0]->attr('style') =~ /display:\s*none/i;
-        return 1 if $_[0]->tag =~ /^(?:script|head)$/i;
-        return 1 if $_[0]->tag =~ /^input$/i and $_[0]->attr('type') and $_[0]->attr('type') =~ /hidden/i;
+        return 1 if lc($_[0]->attr('style') || '') =~ /display\s*:\s*none/;
+        return 1 if lc($_[0]->tag) eq 'script' || lc($_[0]->tag) eq 'head';
+        return 1 if lc($_[0]->tag) eq 'input' && lc($_[0]->attr('type') || '') eq 'hidden';
         return 0;
     });
 
-    return @hidden ? 0 : 1;
+    return scalar(@hidden) > 0;
 }
 
 sub is_selected {
@@ -79,70 +141,63 @@ sub is_selected {
     return $self->attr('selected') || $self->attr('checked');
 }
 
-*is_checked = \&is_selected; # alias
+*is_checked = \&is_selected;
 
 sub set {
     my ($self, $value) = @_;
 
-    if ($self->tag_name eq 'input' and $self->attr('type') =~ /(?:checkbox|radio)/) {
+    if ($self->_is_text_field) {
+        $self->_mech->field($self->_selector, $value);
+    }
+    elsif ($self->_is_checkbox || $self->_is_radio) {
         $self->select;
-    }
-    elsif ($self->tag_name eq 'input') {
-        $self->native->attr(value => $value);
-    }
-    elsif ($self->tag_name eq 'textarea') {
-        $self->native->delete_content;
-        $self->native->push_content($value);
     }
 }
 
 sub select {
     my $self = shift;
-    my $mech = $self->_mech;
 
     if ($self->_is_checkbox) {
-        $mech->tick($self->attr('name'), $self->value) if $self->is_not_selected;
+        $self->_mech->tick($self->_selector, $self->value);
+        $self->native->attr(checked => 'checked');
     }
     elsif ($self->_is_radio) {
-        $mech->set_visible([ radio => $self->value ]) if $self->is_not_selected;
+        $self->_mech->set_visible([ radio => $self->value ]);
+        $self->native->attr(selected => 'selected');
     }
-    elsif ($self->tag_name eq 'option') {
-        $mech->select($self->attr('name'), $self->value) if $self->is_not_selected;
+    elsif ($self->_is_option) {
+        $self->_mech->select($self->_selector, $self->value);
+        $self->native->attr(selected => 'selected');
     }
 }
 
 sub unselect {
     my $self = shift;
-    my $mech = $self->_mech;
 
     if ($self->_is_checkbox) {
-        $mech->untick($self->attr('name'), $self->value) if $self->is_selected;
+        $self->_mech->untick($self->_selector, $self->value);
+        $self->native->attr(checked => '');
     }
-    elsif ($self->tag_name eq 'option') {
-        # TODO: check if multiple select options
+    elsif ($self->_is_option && $self->_is_in_multiple_select) {
+        $self->_mech->field($self->_selector, undef);
+        $self->native->attr(selected => '');
     }
 }
 
 sub click {
     my $self = shift;
-    my $mech = $self->_mech;
 
     if ($self->_is_link) {
-        return $mech->follow_link(url => $self->attr('href'));
+        $self->_mech->follow_link(url => $self->attr('href'));
     }
     elsif ($self->_is_button) {
-        my $name = $self->attr('name');
-        return $mech->click_button($name ? (name => $name) : (value => $self->value));
+        $self->_mech->click_button($self->_name ? (name => $self->_name) : (value => $self->value));
     }
-    elsif ($self->_is_checkbox) {
-        my $modifier = $self->is_checked ? 'untick' : 'tick';
-        return $mech->$modifier($self->attr('name'), $self->value);
+    elsif ($self->_is_checkbox || $self->_is_option) {
+        $self->is_checked ? $self->unselect : $self->select;
     }
     elsif ($self->_is_radio) {
-        return $mech->set_visible([ radio => $self->value ]);
-    }
-    elsif ($self->tag_name eq 'option') {
-        return $mech->select($self->attr('name'), $self->value);
+        $self->select;
     }
 }
 
