@@ -39,7 +39,7 @@ sub visit {
 
 sub current_url {
     my $self = shift;
-    return $self->browser->uri;
+    return $self->browser->uri->clone;
 }
 
 sub current_path {
