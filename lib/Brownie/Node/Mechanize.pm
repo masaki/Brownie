@@ -24,17 +24,14 @@ sub _selector {
     return $selector;
 }
 
-sub _is_in_link {
+sub _find_outer_link {
     my $self = shift;
-    return $self->native->look_up(sub {
+
+    my @links = $self->native->look_up(sub {
         return lc($_[0]->tag) eq 'a' && $_[0]->attr('href');
     });
-}
 
-sub _detect_link {
-    my $self = shift;
-    my @links = $self->_is_in_link;
-    return @links ? shift(@links)->attr('href') : '';
+    return @links ? $links[0]->attr('href') : '';
 }
 
 sub _is_text_field {
@@ -74,6 +71,15 @@ sub _is_in_multiple_select {
     });
 }
 
+sub _is_form_control {
+    my $self = shift;
+    return $self->_is_text_field
+        || $self->_is_button
+        || $self->_is_checkbox
+        || $self->_is_radio
+        || $self->_is_option;
+}
+
 sub attr {
     my ($self, $name) = @_;
     return $self->native->attr($name) || '';
@@ -106,28 +112,6 @@ sub find_elements {
 }
 
 sub _mech { return shift->driver->browser }
-
-sub _is_form_control {
-    my $self = shift;
-    return $self->_is_text_field
-        || $self->_is_button
-        || $self->_is_checkbox
-        || $self->_is_radio
-        || $self->_is_option;
-}
-
-sub _as_html_form {
-    my $self = shift;
-
-    if ($self->_is_form_control) {
-        for my $form ($self->_mech->forms) {
-            my $input = $form->find_input($self->_selector);
-            return $input if $input;
-        }
-    }
-
-    return;
-}
 
 sub is_displayed { !shift->is_not_displayed }
 
@@ -195,17 +179,20 @@ sub unselect {
 sub click {
     my $self = shift;
 
-    if ($self->_is_in_link) {
-        $self->_mech->follow_link(url => $self->_detect_link);
+    if ($self->_is_form_control) {
+        if ($self->_is_button) {
+            my %args = $self->_selector ? (name => $self->_selector) : (value => $self->value);
+            $self->_mech->click_button(%args);
+        }
+        elsif ($self->_is_checkbox || $self->_is_option) {
+            $self->is_checked ? $self->unselect : $self->select;
+        }
+        elsif ($self->_is_radio) {
+            $self->select;
+        }
     }
-    elsif ($self->_is_button) {
-        $self->_mech->click_button($self->_name ? (name => $self->_name) : (value => $self->value));
-    }
-    elsif ($self->_is_checkbox || $self->_is_option) {
-        $self->is_checked ? $self->unselect : $self->select;
-    }
-    elsif ($self->_is_radio) {
-        $self->select;
+    elsif (my $link = $self->_find_outer_link) {
+        $self->_mech->follow_link(url => $link);
     }
 }
 
