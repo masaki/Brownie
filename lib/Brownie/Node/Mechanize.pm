@@ -24,9 +24,17 @@ sub _selector {
     return $selector;
 }
 
-sub _is_link {
+sub _is_in_link {
     my $self = shift;
-    return $self->tag_name eq 'a' && $self->attr('href');
+    return $self->native->look_up(sub {
+        return lc($_[0]->tag) eq 'a' && $_[0]->attr('href');
+    });
+}
+
+sub _detect_link {
+    my $self = shift;
+    my @links = $self->_is_in_link;
+    return @links ? shift(@links)->attr('href') : '';
 }
 
 sub _is_text_field {
@@ -187,8 +195,8 @@ sub unselect {
 sub click {
     my $self = shift;
 
-    if ($self->_is_link) {
-        $self->_mech->follow_link(url => $self->attr('href'));
+    if ($self->_is_in_link) {
+        $self->_mech->follow_link(url => $self->_detect_link);
     }
     elsif ($self->_is_button) {
         $self->_mech->click_button($self->_name ? (name => $self->_name) : (value => $self->value));
