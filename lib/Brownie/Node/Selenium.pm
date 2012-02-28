@@ -63,7 +63,7 @@ sub set {
         $self->select;
     }
     elsif ($self->tag_name eq 'input' or $self->tag_name eq 'textarea') {
-        $self->native->clear;
+        $self->native->clear if $self->attr('type') ne 'file';
         $self->native->send_keys($value);
     }
 }

@@ -1,5 +1,8 @@
 Revision history for Perl extension Brownie
 
+trunk
+        - does not call clear() if file attachment field
+
 0.04
         - added status_code() and response_headers() to driver I/F
         - tests based on shared examples
