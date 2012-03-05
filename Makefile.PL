@@ -27,6 +27,7 @@ test_requires 'Test::File';
 test_requires 'Exporter';
 test_requires 'File::Temp';
 test_requires 'File::Spec';
+test_requires 'Data::Section::Simple';
 
 recursive_author_tests 'xt';
 auto_set_repository;

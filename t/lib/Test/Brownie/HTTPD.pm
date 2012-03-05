@@ -4,14 +4,32 @@ use strict;
 use warnings;
 use parent 'Exporter';
 use Test::Fake::HTTPD;
+use Data::Section::Simple qw(get_data_section);
+
+our @EXPORT = qw(test_httpd);
 
 sub import {
     __PACKAGE__->export_to_level(2, @_);
 }
 
-our @EXPORT = qw(test_httpd);
+sub test_httpd {
+    my $content = shift || get_data_section('index.html');
 
-our $Content = <<'EOF';
+    my $httpd = Test::Fake::HTTPD->new(timeout => 30);
+    $httpd->run(sub {
+        my $req = shift;
+        my $body = sprintf $content, $req->uri->path;
+        return [ 200, ['Content-Type', 'text/html;charset=utf-8'], [$body] ];
+    });
+
+    $httpd;
+};
+
+1;
+
+__DATA__
+
+@@ index.html
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
@@ -47,6 +65,8 @@ our $Content = <<'EOF';
       <p>
         <label for="input_text">Input Text Label</label>
         <input type="text" id="input_text" value="Input Text Value" title="Input Text Title"/>
+        <label for="input_text2">INput Text2 Label</label>
+        <input id="input_text2" name="input_text2" value="Input Text2 Value" />
       </p>
       <p>
         <label for="textarea">Textarea Label</label>
@@ -93,15 +113,3 @@ our $Content = <<'EOF';
     </p>
   </body>
 </html>
-EOF
-
-sub test_httpd {
-    my $content = shift || $Content;
-    run_http_server {
-        my $req = shift;
-        my $body = sprintf $content, $req->uri->path;
-        return [ 200, ['Content-Type', 'text/html;charset=utf-8'], [$body] ];
-    }
-};
-
-1;
