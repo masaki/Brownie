@@ -1,6 +1,6 @@
 Revision history for Perl extension Brownie
 
-trunk
+0.05
         - does not call clear() if file attachment field
         - support input[not(@type)] as text field
 
@@ -14,7 +14,7 @@ trunk
 0.02
         - add eg/google.pl
         - joining XPath
-        - use selenium dr iver native find_element()
+        - use selenium driver native find_element()
 
 0.01
         - original version
