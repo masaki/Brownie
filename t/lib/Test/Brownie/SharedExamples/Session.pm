@@ -168,7 +168,7 @@ sub session_support_form_action {
 
             my $node = $session->find_element("#$id");
             ok $node->is_selected;
-            ok $session->select($locator);
+            ok $session->unselect($locator);
             ok $node->is_not_selected;
         }
     };
