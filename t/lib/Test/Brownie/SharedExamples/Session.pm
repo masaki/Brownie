@@ -62,6 +62,7 @@ sub session_support_form_action {
     subtest 'fill_in' => sub {
         my @params = (
             ['input_text', 'input_text'],
+            ['input_text2', 'input_text2'],
             ['Input Text Title', 'input_text'],
             ['Input Text Label', 'input_text'],
             ['Inner Input Password Lavel', 'input_password'],

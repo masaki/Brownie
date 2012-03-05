@@ -39,11 +39,11 @@ sub to_button {
 sub to_text_field {
     my $locator = shift;
     return join '|', map { sprintf $_, $locator } (
-        q!//input[(@type='text' or @type='password') and @id='%s']!,
-        q!//input[(@type='text' or @type='password') and @name='%s']!,
-        q!//input[(@type='text' or @type='password') and @id=//label[text()='%s']/@for]!,
-        q!//label[text()='%s']//input[(@type='text' or @type='password')]!,
-        q!//input[(@type='text' or @type='password') and @title='%s']!,
+        q!//input[(not(@type) or @type='text' or @type='password') and @id='%s']!,
+        q!//input[(not(@type) or @type='text' or @type='password') and @name='%s']!,
+        q!//input[(not(@type) or @type='text' or @type='password') and @id=//label[text()='%s']/@for]!,
+        q!//label[text()='%s']//input[(not(@type) or @type='text' or @type='password')]!,
+        q!//input[(not(@type) or @type='text' or @type='password') and @title='%s']!,
         q!//textarea[@id='%s']!,
         q!//textarea[@name='%s']!,
         q!//textarea[@id=//label[text()='%s']/@for]!,
