@@ -16,6 +16,7 @@ sub to_link {
     my $locator = shift;
     return join '|', map { sprintf $_, $locator } (
         q!//a[@id='%s']!,
+        q!//a[@name='%s']!,
         q!//a[text()='%s']!,
         q!//a[@title='%s']!,
         q!//a//img[@alt='%s']!,
@@ -26,10 +27,12 @@ sub to_button {
     my $locator = shift;
     return join '|', map { sprintf $_, $locator } (
         q!//input[(@type='submit' or @type='button' or @type='image') and @id='%s']!,
+        q!//input[(@type='submit' or @type='button' or @type='image') and @name='%s']!,
         q!//input[(@type='submit' or @type='button' or @type='image') and @value='%s']!,
         q!//input[(@type='submit' or @type='button' or @type='image') and @title='%s']!,
         q!//input[@type='image' and @alt='%s']!,
         q!//button[@id='%s']!,
+        q!//button[@name='%s']!,
         q!//button[@value='%s']!,
         q!//button[@title='%s']!,
         q!//button[text()='%s']!,
@@ -39,11 +42,13 @@ sub to_button {
 sub to_text_field {
     my $locator = shift;
     return join '|', map { sprintf $_, $locator } (
-        q!//input[(not(@type) or @type='text' or @type='password') and @id='%s']!,
-        q!//input[(not(@type) or @type='text' or @type='password') and @name='%s']!,
-        q!//input[(not(@type) or @type='text' or @type='password') and @id=//label[text()='%s']/@for]!,
-        q!//label[text()='%s']//input[(not(@type) or @type='text' or @type='password')]!,
-        q!//input[(not(@type) or @type='text' or @type='password') and @title='%s']!,
+        q!//input[(@type='text' or @type='password') and @id='%s']!,
+        q!//input[(@type='text' or @type='password') and @name='%s']!,
+        q!//input[@id='%s']!,
+        q!//input[@name='%s']!,
+        q!//input[(@type='text' or @type='password') and @id=//label[text()='%s']/@for]!,
+        q!//label[text()='%s']//input[(@type='text' or @type='password')]!,
+        q!//input[(@type='text' or @type='password') and @title='%s']!,
         q!//textarea[@id='%s']!,
         q!//textarea[@name='%s']!,
         q!//textarea[@id=//label[text()='%s']/@for]!,
