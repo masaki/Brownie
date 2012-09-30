@@ -5,26 +5,6 @@ use warnings;
 use parent 'Brownie::Node';
 use Carp ();
 
-# shortcut
-for my $name (qw(id name type)) {
-    no strict 'refs';
-    *{"_${name}"} = sub { return shift->attr($name) || '' };
-}
-
-sub _selector {
-    my $self = shift;
-
-    my $selector = '';
-    if (my $id = $self->_id) {
-        $selector = "#$id";
-    }
-    elsif (my $name = $self->_name) {
-        $selector = "^$name";
-    }
-
-    return $selector;
-}
-
 sub _find_outer_link {
     my $self = shift;
 
@@ -38,25 +18,25 @@ sub _find_outer_link {
 sub _is_text_field {
     my $self = shift;
     return 1 if $self->tag_name eq 'textarea';
-    return 1 if $self->tag_name eq 'input' && ($self->_type =~ /^(?:text|password|file|hidden)$/i || !$self->_type);
+    return 1 if $self->tag_name eq 'input' && ($self->type =~ /^(?:text|password|file|hidden)$/i || !$self->type);
     return 0;
 }
 
 sub _is_button {
     my $self = shift;
-    return 1 if $self->tag_name eq 'input'  && $self->_type =~ /^(?:submit|image)$/i;
-    return 1 if $self->tag_name eq 'button' && (!$self->_type || $self->_type eq 'submit');
+    return 1 if $self->tag_name eq 'input'  && $self->type =~ /^(?:submit|image)$/i;
+    return 1 if $self->tag_name eq 'button' && (!$self->type || $self->type eq 'submit');
     return 0;
 }
 
 sub _is_checkbox {
     my $self = shift;
-    return $self->tag_name eq 'input' && $self->_type eq 'checkbox';
+    return $self->tag_name eq 'input' && $self->type eq 'checkbox';
 }
 
 sub _is_radio {
     my $self = shift;
-    return $self->tag_name eq 'input' && $self->_type eq 'radio';
+    return $self->tag_name eq 'input' && $self->type eq 'radio';
 }
 
 sub _is_option {
@@ -81,14 +61,15 @@ sub _is_form_control {
         || $self->_is_option;
 }
 
+# shortcut
+for my $name (qw(id name type value)) {
+    no strict 'refs';
+    *{"${name}"} = sub { return shift->attr($name) || '' };
+}
+
 sub attr {
     my ($self, $name) = @_;
     return $self->native->attr($name) || '';
-}
-
-sub value {
-    my $self = shift;
-    return $self->_mech->value($self->_selector) || '';
 }
 
 sub text {
@@ -113,6 +94,20 @@ sub find_elements {
 }
 
 sub _mech { return shift->driver->browser }
+
+sub _mech_selector {
+    my $self = shift;
+
+    my $selector = '';
+    if (my $id = $self->id) {
+        $selector = "#$id";
+    }
+    elsif (my $name = $self->name) {
+        $selector = "^$name";
+    }
+
+    return $selector;
+}
 
 sub is_displayed { !shift->is_not_displayed }
 
@@ -140,7 +135,7 @@ sub set {
     my ($self, $value) = @_;
 
     if ($self->_is_text_field) {
-        $self->_mech->field($self->_selector, $value);
+        $self->_mech->field($self->_mech_selector, $value);
     }
     elsif ($self->_is_checkbox || $self->_is_radio) {
         $self->select;
@@ -154,7 +149,7 @@ sub select {
     my $self = shift;
 
     if ($self->_is_checkbox) {
-        $self->_mech->tick($self->_selector, $self->value);
+        $self->_mech->tick($self->_mech_selector, $self->value);
         $self->native->attr(checked => 'checked');
     }
     elsif ($self->_is_radio) {
@@ -162,7 +157,7 @@ sub select {
         $self->native->attr(selected => 'selected');
     }
     elsif ($self->_is_option) {
-        $self->_mech->select($self->_selector, $self->value);
+        $self->_mech->select($self->_mech_selector, $self->value);
         $self->native->attr(selected => 'selected');
     }
     else {
@@ -174,11 +169,11 @@ sub unselect {
     my $self = shift;
 
     if ($self->_is_checkbox) {
-        $self->_mech->untick($self->_selector, $self->value);
+        $self->_mech->untick($self->_mech_selector, $self->value);
         $self->native->attr(checked => '');
     }
     elsif ($self->_is_option && $self->_is_in_multiple_select) {
-        $self->_mech->field($self->_selector, undef);
+        $self->_mech->field($self->_mech_selector, undef);
         $self->native->attr(selected => '');
     }
     else {
@@ -191,7 +186,7 @@ sub click {
 
     if ($self->_is_form_control) {
         if ($self->_is_button) {
-            my %args = $self->_name ? (name => $self->_name) : (value => $self->value);
+            my %args = $self->name ? (name => $self->name) : (value => $self->value);
             $self->_mech->click_button(%args);
         }
         elsif ($self->_is_checkbox || $self->_is_option) {
