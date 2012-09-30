@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use parent 'Exporter';
 use Test::Fake::HTTPD;
+use URI;
+use URI::QueryParam;
 use Brownie::Session;
 
 our @EXPORT = qw(
