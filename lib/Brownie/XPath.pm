@@ -39,6 +39,27 @@ sub to_button {
     );
 }
 
+sub to_link_or_button {
+    my $locator = shift;
+    return join '|', map { sprintf $_, $locator } (
+        q!//a[@id='%s']!,
+        q!//a[@name='%s']!,
+        q!//a[@title='%s']!,
+        q!//a[contains(text(),'%s')]!,
+        q!//a//img[@alt='%s']!,
+        q!//input[(@type='submit' or @type='button' or @type='image') and @id='%s']!,
+        q!//input[(@type='submit' or @type='button' or @type='image') and @name='%s']!,
+        q!//input[(@type='submit' or @type='button' or @type='image') and @title='%s']!,
+        q!//input[(@type='submit' or @type='button' or @type='image') and @value='%s']!,
+        q!//input[@type='image' and @alt='%s']!,
+        q!//button[@id='%s']!,
+        q!//button[@name='%s']!,
+        q!//button[@title='%s']!,
+        q!//button[@value='%s']!,
+        q!//button[contains(text(),'%s')]!,
+    );
+}
+
 sub to_text_field {
     my $locator = shift;
     return join '|', map { sprintf $_, $locator } (

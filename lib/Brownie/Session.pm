@@ -75,8 +75,10 @@ sub click_button {
 
 sub click_link_or_button {
     my ($self, $locator) = @_;
-    return $self->click_link($locator) || $self->click_button($locator);
+    my $xpath = Brownie::XPath::to_link_or_button($locator);
+    _do_safe_action(sub { $self->find($xpath)->click });
 }
+*click_on = \&click_link_or_button;
 
 sub fill_in {
     my ($self, $locator, $value) = @_;
