@@ -3,6 +3,7 @@ package Brownie::Node::Mechanize;
 use strict;
 use warnings;
 use parent 'Brownie::Node';
+use Carp ();
 
 # shortcut
 for my $name (qw(id name type)) {
@@ -37,7 +38,7 @@ sub _find_outer_link {
 sub _is_text_field {
     my $self = shift;
     return 1 if $self->tag_name eq 'textarea';
-    return 1 if $self->tag_name eq 'input' && $self->_type =~ /^(?:text|password|hidden)$/i;
+    return 1 if $self->tag_name eq 'input' && ($self->_type =~ /^(?:text|password|file|hidden)$/i || !$self->_type);
     return 0;
 }
 
@@ -144,6 +145,9 @@ sub set {
     elsif ($self->_is_checkbox || $self->_is_radio) {
         $self->select;
     }
+    else {
+        Carp::carp("This element is not a form control.");
+    }
 }
 
 sub select {
@@ -161,6 +165,9 @@ sub select {
         $self->_mech->select($self->_selector, $self->value);
         $self->native->attr(selected => 'selected');
     }
+    else {
+        Carp::carp("This element is not selectable.");
+    }
 }
 
 sub unselect {
@@ -174,6 +181,9 @@ sub unselect {
         $self->_mech->field($self->_selector, undef);
         $self->native->attr(selected => '');
     }
+    else {
+        Carp::carp("This element is not selectable.");
+    }
 }
 
 sub click {
@@ -181,7 +191,7 @@ sub click {
 
     if ($self->_is_form_control) {
         if ($self->_is_button) {
-            my %args = $self->_selector ? (name => $self->_selector) : (value => $self->value);
+            my %args = $self->_name ? (name => $self->_name) : (value => $self->value);
             $self->_mech->click_button(%args);
         }
         elsif ($self->_is_checkbox || $self->_is_option) {
@@ -190,9 +200,15 @@ sub click {
         elsif ($self->_is_radio) {
             $self->select;
         }
+        else {
+            Carp::carp("This element is not a clickable control.");
+        }
     }
     elsif (my $link = $self->_find_outer_link) {
         $self->_mech->follow_link(url => $link);
+    }
+    else {
+        Carp::carp("This element is not clickable.");
     }
 }
 
