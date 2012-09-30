@@ -17,7 +17,7 @@ sub to_link {
     return join '|', map { sprintf $_, $locator } (
         q!//a[@id='%s']!,
         q!//a[@name='%s']!,
-        q!//a[text()='%s']!,
+        q!//a[contains(text(),'%s')]!,
         q!//a[@title='%s']!,
         q!//a//img[@alt='%s']!,
     );
@@ -35,7 +35,7 @@ sub to_button {
         q!//button[@name='%s']!,
         q!//button[@value='%s']!,
         q!//button[@title='%s']!,
-        q!//button[text()='%s']!,
+        q!//button[contains(text(),'%s')]!,
     );
 }
 
@@ -62,8 +62,8 @@ sub to_radio {
     return join '|', map { sprintf $_, $locator } (
         q!//input[@type='radio' and @id='%s']!,
         q!//input[@type='radio' and @name='%s']!,
-        q!//input[@type='radio' and @id=//label[text()='%s']/@for]!,
-        q!//label[text()='%s']//input[@type='radio']!,
+        q!//input[@type='radio' and @id=//label[contains(text(),'%s')]/@for]!,
+        q!//label[contains(text(),'%s')]//input[@type='radio']!,
         q!//input[@type='radio' and @value='%s']!,
         q!//input[@type='radio' and @title='%s']!,
     );
@@ -74,8 +74,8 @@ sub to_checkbox {
     return join '|', map { sprintf $_, $locator } (
         q!//input[@type='checkbox' and @id='%s']!,
         q!//input[@type='checkbox' and @name='%s']!,
-        q!//input[@type='checkbox' and @id=//label[text()='%s']/@for]!,
-        q!//label[text()='%s']//input[@type='checkbox']!,
+        q!//input[@type='checkbox' and @id=//label[contains(text(),'%s')]/@for]!,
+        q!//label[contains(text(),'%s')]//input[@type='checkbox']!,
         q!//input[@type='checkbox' and @value='%s']!,
         q!//input[@type='checkbox' and @title='%s']!,
     );
@@ -86,7 +86,7 @@ sub to_option {
     return join '|', map { sprintf $_, $locator } (
         q!//option[@id='%s']!,
         q!//option[@name='%s']!,
-        q!//option[text()='%s']!,
+        q!//option[contains(text(),'%s')]!,
         q!//option[@value='%s']!,
         q!//option[@title='%s']!,
     );
@@ -97,8 +97,8 @@ sub to_file_field {
     return join '|', map { sprintf $_, $locator } (
         q!//input[@type='file' and @id='%s']!,
         q!//input[@type='file' and @name='%s']!,
-        q!//input[@type='file' and @id=//label[text()='%s']/@for]!,
-        q!//label[text()='%s']//input[@type='file']!,
+        q!//input[@type='file' and @id=//label[contains(text(),'%s')]/@for]!,
+        q!//label[contains(text(),'%s')]//input[@type='file']!,
         q!//input[@type='file' and @title='%s']!,
     );
 }
