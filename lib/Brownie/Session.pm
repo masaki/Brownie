@@ -2,6 +2,7 @@ package Brownie::Session;
 
 use strict;
 use warnings;
+use Carp ();
 use Class::Load;
 use Sub::Install;
 
@@ -12,12 +13,17 @@ use Brownie::XPath;
 sub new {
     my ($class, %args) = @_;
 
-    $args{driver_name}  ||= 'Selenium';
-    $args{driver_class} ||= 'Brownie::Driver::' . $args{driver_name};
-    $args{driver_args}  ||= {};
+    my $driver_opts = delete $args{driver};
+    $driver_opts ||= +{ name => 'Mechanize' };
+    unless (ref $driver_opts) {
+        $driver_opts = +{ name => $driver_opts };
+    }
 
-    Class::Load::load_class($args{driver_class});
-    my $driver = $args{driver_class}->new(%{$args{driver_args}});
+    $driver_opts->{class} ||= 'Brownie::Driver::' . $driver_opts->{name};
+    $driver_opts->{args}  ||= {};
+
+    Class::Load::load_class($driver_opts->{class});
+    my $driver = $driver_opts->{class}->new(%{ $driver_opts->{args} });
 
     return bless { %args, scopes => [], driver => $driver }, $class;
 }
@@ -45,25 +51,29 @@ sub current_node {
     }
 }
 
-sub _find     { $_[0]->current_node->find_element($_[1]) }
-sub _click    { $_[0]->_find($_[1])->click      }
-sub _set      { $_[0]->_find($_[1])->set($_[2]) }
-sub _select   { $_[0]->_find($_[1])->select     }
-sub _unselect { $_[0]->_find($_[1])->unselect   }
+sub find { $_[0]->current_node->find_element($_[1]) }
+sub all  { $_[0]->current_node->find_elements($_[1]) }
+
+sub _do_safe_action {
+    my $code = shift;
+    my $ret = eval { $code->(); 1 } || 0;
+    Carp::carp($@) if $@;
+    return $ret;
+}
 
 sub click_link {
     my ($self, $locator) = @_;
     my $xpath = Brownie::XPath::to_link($locator);
-    return eval { $self->_click($xpath); 1 };
+    _do_safe_action(sub { $self->find($xpath)->click });
 }
 
 sub click_button {
     my ($self, $locator) = @_;
     my $xpath = Brownie::XPath::to_button($locator);
-    return eval { $self->_click($xpath); 1 };
+    _do_safe_action(sub { $self->find($xpath)->click });
 }
 
-sub click_on {
+sub click_link_or_button {
     my ($self, $locator) = @_;
     return $self->click_link($locator) || $self->click_button($locator);
 }
@@ -71,43 +81,43 @@ sub click_on {
 sub fill_in {
     my ($self, $locator, $value) = @_;
     my $xpath = Brownie::XPath::to_text_field($locator);
-    return eval { $self->_set($xpath, $value); 1 };
+    _do_safe_action(sub { $self->find($xpath)->set($value) });
 }
 
 sub choose {
     my ($self, $locator) = @_;
     my $xpath = Brownie::XPath::to_radio($locator);
-    return eval { $self->_select($xpath); 1 };
+    _do_safe_action(sub { $self->find($xpath)->select });
 }
 
 sub check {
     my ($self, $locator) = @_;
     my $xpath = Brownie::XPath::to_checkbox($locator);
-    return eval { $self->_select($xpath); 1 };
+    _do_safe_action(sub { $self->find($xpath)->select });
 }
 
 sub uncheck {
     my ($self, $locator) = @_;
     my $xpath = Brownie::XPath::to_checkbox($locator);
-    return eval { $self->_unselect($xpath); 1 };
+    _do_safe_action(sub { $self->find($xpath)->unselect });
 }
 
 sub select {
     my ($self, $locator) = @_;
     my $xpath = Brownie::XPath::to_option($locator);
-    return eval { $self->_select($xpath); 1 };
+    _do_safe_action(sub { $self->find($xpath)->select });
 }
 
 sub unselect {
     my ($self, $locator) = @_;
     my $xpath = Brownie::XPath::to_option($locator);
-    return eval { $self->_unselect($xpath); 1 };
+    _do_safe_action(sub { $self->find($xpath)->unselect });
 }
 
 sub attach_file {
     my ($self, $locator, $filename) = @_;
     my $xpath = Brownie::XPath::to_file_field($locator);
-    return eval { $self->_set($xpath, $filename); 1 };
+    _do_safe_action(sub { $self->find($xpath)->set($filename) });
 }
 
 1;
@@ -122,15 +132,27 @@ Brownie::Session - browser session class
   use Brownie::Session;
 
   my $session = Brownie::Session->new(
-      driver_name => 'Selenium', # (e.g.) 'Selenium', 'Mechanize', ...
-      driver_args => { # some args for driver instantiation
-          selenium_host => 'localhost',
-          selenium_port => 4444,
-      },
+      driver => 'Mechanize',
+      host   => 'http://app.local:8080',
   );
 
-  $session->visit('http://example.com');
-  is $session->title => 'Example.com';
+  # or use PSGI internal
+  my $session = Brownie::Session->new(
+      driver => 'Mechanize',
+      app    => sub { ...(PSGI app)... },
+  );
+
+  # w/ driver args
+  my $session = Brownie::Session->new(
+      driver => {
+          name => 'Selenium::RemoteDriver',
+          args => { host => 'localhost', port => 4444 },
+      },
+      host   => 'http://example.com',
+  );
+
+  $session->visit('/');
+  is $session->title => 'Some Title';
 
   $session->fill_in('User Name' => 'brownie');
   $session->fill_in('Email Address' => 'brownie@example.com');
@@ -138,7 +160,7 @@ Brownie::Session - browser session class
   like $session->source => qr/Welcome (.+)/;
 
   $session->fill_in(q => 'Brownie');
-  $session->click_on('Search');
+  $session->click_link_or_button('Search');
   like $session->title => qr/Search result of Brownie/i;
 
   done_testing;
@@ -155,9 +177,11 @@ C<%args> are:
 
 =over 8
 
-=item * C<driver_name>: loadable driver name (e.g. 'Selenium', 'Mechanize', ...)
+=item * C<driver>: loadable driver name or config
 
-=item * C<driver_args>: some args to driver instantiation
+=item * C<host>: external target application
+
+=item * C<app>: PSGI application
 
 =back
 
