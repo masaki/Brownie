@@ -15,6 +15,23 @@ sub _find_outer_link {
     return @links ? $links[0]->attr('href') : '';
 }
 
+sub _find_select_selector {
+    my $self = shift;
+
+    my ($select) = $self->native->look_up(sub {
+        return lc($_[0]->tag) eq 'select' && ($_[0]->attr('id') || $_[0]->attr('name'));
+    });
+
+    return unless $select;
+
+    if (my $id = $select->attr('id')) {
+        return '#'.$id;
+    }
+    elsif (my $name = $select->attr('name')) {
+        return '^'.$name;
+    }
+}
+
 sub _is_text_field {
     my $self = shift;
     return 1 if $self->tag_name eq 'textarea';
@@ -137,7 +154,7 @@ sub set {
     if ($self->_is_text_field) {
         $self->_mech->field($self->_mech_selector, $value);
     }
-    elsif ($self->_is_checkbox || $self->_is_radio) {
+    elsif ($self->_is_checkbox || $self->_is_radio || $self->_is_option) {
         $self->select;
     }
     else {
@@ -157,8 +174,11 @@ sub select {
         $self->native->attr(selected => 'selected');
     }
     elsif ($self->_is_option) {
-        $self->_mech->select($self->_mech_selector, $self->value);
-        $self->native->attr(selected => 'selected');
+        my $selector = $self->_find_select_selector;
+        if ($selector) {
+            $self->_mech->select($selector, $self->value);
+            $self->native->attr(selected => 'selected');
+        }
     }
     else {
         Carp::carp("This element is not selectable.");
