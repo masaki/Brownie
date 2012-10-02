@@ -51,8 +51,11 @@ sub current_node {
     }
 }
 
-sub find { $_[0]->current_node->find_element($_[1]) }
-sub all  { $_[0]->current_node->find_elements($_[1]) }
+sub document { shift->driver->find('/html') }
+
+sub find  { $_[0]->current_node->find($_[1])  }
+sub first { $_[0]->current_node->first($_[1]) }
+sub all   { $_[0]->current_node->all($_[1])   }
 
 sub _do_safe_action {
     my $code = shift;

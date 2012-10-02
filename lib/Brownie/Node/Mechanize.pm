@@ -78,12 +78,6 @@ sub _is_form_control {
         || $self->_is_option;
 }
 
-# shortcut
-for my $name (qw(id name type value)) {
-    no strict 'refs';
-    *{"${name}"} = sub { return shift->attr($name) || '' };
-}
-
 sub attr {
     my ($self, $name) = @_;
     return $self->native->attr($name) || '';
@@ -97,17 +91,6 @@ sub text {
 sub tag_name {
     my $self = shift;
     return lc $self->native->tag;
-}
-
-sub find_element {
-    my ($self, $locator) = @_;
-    return $self->driver->find_element($locator, -base => $self);
-}
-
-sub find_elements {
-    my ($self, $locator) = @_;
-    my @children = $self->driver->find_elements($locator, -base => $self);
-    return @children ? @children : ();
 }
 
 sub _mech { return shift->driver->browser }
@@ -245,11 +228,17 @@ Please see L<Brownie::Node> document.
 
 =item * C<attr>
 
+=item * C<tag_name>
+
+=item * C<id>
+
+=item * C<name>
+
+=item * C<type>
+
 =item * C<value>
 
 =item * C<text>
-
-=item * C<tag_name>
 
 =item * C<is_displayed>
 
@@ -265,9 +254,11 @@ Please see L<Brownie::Node> document.
 
 =item * C<click>
 
-=item * C<find_element($locator)>
+=item * C<find($locator)>
 
-=item * C<find_elements($locator)>
+=item * C<first($locator)>
+
+=item * C<all($locator)>
 
 =back
 

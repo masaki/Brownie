@@ -14,10 +14,27 @@ sub new {
 sub driver { shift->{driver} }
 sub native { shift->{native} }
 
-our @Accessor = qw(attr value text tag_name);
-our @Finder   = qw(find_element find_elements);
+our @Accessor = qw(attr text tag_name id name value type);
+our @Finder   = qw(find all first);
 our @State    = qw(is_displayed is_not_displayed is_selected is_not_selected is_checked is_not_checked);
 our @Action   = qw(click set select unselect);
+
+sub id    { shift->attr('id')    }
+sub name  { shift->attr('name')  }
+sub type  { shift->attr('type')  }
+sub value { shift->attr('value') }
+
+sub find {
+    my ($self, $locator) = @_;
+    return $self->driver->find($locator, base => $self);
+}
+*first = \&find;
+
+sub all {
+    my ($self, $locator) = @_;
+    my @children = $self->driver->all($locator, base => $self);
+    return @children ? @children : ();
+}
 
 sub is_not_displayed { !shift->is_displayed }
 sub is_not_selected  { !shift->is_selected  }
@@ -164,17 +181,17 @@ Clicks this element.
   $link->click;
   $button->click;
 
-=item * C<find_element($locator)>
+=item * C<find($locator)>
 
 Finds and returns an located element under this.
 
-  my $element = $node->find_element($locator); # search under $node
+  my $element = $node->find($locator); # search under $node
 
-=item * C<find_elements($locator)>
+=item * C<all($locator)>
 
 Finds and returns located elements under this.
 
-  my @elements = $node->find_elements($locator); # search under $node
+  my @elements = $node->all($locator); # search under $node
 
 =back
 

@@ -75,20 +75,20 @@ sub _root {
     my $tree = $builder->new_from_content($self->source);
 }
 
-sub find_element {
+sub find {
     my ($self, $locator, %args) = @_;
 
-    my @elements = $self->find_elements($locator, %args);
+    my @elements = $self->all($locator, %args);
     return @elements ? shift(@elements) : undef;
 }
 
-sub find_elements {
+sub all {
     my ($self, $locator, %args) = @_;
 
     my @elements = ();
     my $xpath = Brownie::XPath::to_xpath($locator);
 
-    if (my $base = $args{-base}) {
+    if (my $base = $args{base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
         $xpath = ".$xpath" unless $xpath =~ /^\./;
         @elements = $node->findnodes($xpath); # abs2rel
@@ -132,9 +132,9 @@ Please see L<Brownie::Driver> document.
 
 =item * C<source>
 
-=item * C<find_element($locator)>
+=item * C<find($locator)>
 
-=item * C<find_elements($locator)>
+=item * C<all($locator)>
 
 =back
 
@@ -143,8 +143,6 @@ Please see L<Brownie::Driver> document.
 =over 4
 
 =item * C<new>
-
-=item * C<document>
 
 =back
 

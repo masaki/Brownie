@@ -13,17 +13,18 @@ sub new {
 
 our @Navigation = qw(visit current_url current_path);
 our @Headers    = qw(status_code response_headers);
-our @Pages      = qw(title source document screenshot);
-our @Finder     = qw(find_element find_elements);
+our @Pages      = qw(title source screenshot);
 our @Scripting  = qw(execute_script evaluate_script);
 
-sub document { shift->find_element('/html') }
-
 sub PROVIDED_METHODS {
-    return (@Navigation, @Headers, @Pages, @Finder, @Scripting);
+    return (@Navigation, @Headers, @Pages, @Scripting);
 }
 
-for ('browser', PROVIDED_METHODS) {
+sub DRIVER_METHODS {
+    return qw(browser find all);
+}
+
+for (DRIVER_METHODS, PROVIDED_METHODS) {
     next if __PACKAGE__->can($_);
     Sub::Install::install_sub({
         code => Brownie->can('not_implemented'),
