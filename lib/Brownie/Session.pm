@@ -136,24 +136,22 @@ Brownie::Session - browser session class
   use Test::More;
   use Brownie::Session;
 
+  # external server
   my $session = Brownie::Session->new(
       driver => 'Mechanize',
-      host   => 'http://app.local:8080',
+      host   => 'http://app.example.com:5000',
   );
 
-  # or use PSGI internal
+  # PSGI app
   my $session = Brownie::Session->new(
       driver => 'Mechanize',
       app    => sub { ...(PSGI app)... },
   );
 
-  # w/ driver args
+  # PSGI file
   my $session = Brownie::Session->new(
-      driver => {
-          name => 'Selenium::RemoteDriver',
-          args => { host => 'localhost', port => 4444 },
-      },
-      host   => 'http://example.com',
+      driver => 'Mechanize',
+      app    => 'app.psgi',
   );
 
   $session->visit('/');

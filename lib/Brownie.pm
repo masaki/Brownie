@@ -22,16 +22,26 @@ Brownie - Browser integration framework inspired by Capybara
   use Test::More;
   use Brownie::Session;
 
+  # external server
   my $session = Brownie::Session->new(
-      driver_name => 'Selenium', # (e.g.) 'Selenium', 'Mechanize', ...
-      driver_args => { # some args for driver instantiation
-          selenium_host => 'localhost',
-          selenium_port => 4444,
-      },
+      driver => 'Mechanize',
+      host   => 'http://app.example.com:5000',
   );
 
-  $session->visit('http://example.com');
-  is $session->title => 'Example.com';
+  # PSGI app
+  my $session = Brownie::Session->new(
+      driver => 'Mechanize',
+      app    => sub { ...(PSGI app)... },
+  );
+
+  # PSGI file
+  my $session = Brownie::Session->new(
+      driver => 'Mechanize',
+      app    => 'app.psgi',
+  );
+
+  $session->visit('/');
+  is $session->title => 'Some Title';
 
   $session->fill_in('User Name' => 'brownie');
   $session->fill_in('Email Address' => 'brownie@example.com');
@@ -39,7 +49,7 @@ Brownie - Browser integration framework inspired by Capybara
   like $session->source => qr/Welcome (.+)/;
 
   $session->fill_in(q => 'Brownie');
-  $session->click_on('Search');
+  $session->click_link_or_button('Search');
   like $session->title => qr/Search result of Brownie/i;
 
   done_testing;
@@ -92,6 +102,10 @@ Brownie is browser integrtion framework. It is inspired by Capybara (Ruby).
 
 =item * C<evaluate_script($javascript)>
 
+=item * C<find($locator)>
+
+=item * C<all($locator)>
+
 =back
 
 =head1 AUTHOR
@@ -108,7 +122,5 @@ it under the same terms as Perl itself.
 L<Brownie::Session>
 
 L<Capybara|http://github.com/jnicklas/capybara>
-
-L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 
 =cut
