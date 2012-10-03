@@ -5,6 +5,8 @@ use warnings;
 use Carp ();
 use Class::Load;
 use Sub::Install;
+use Plack::Runner;
+use Test::TCP;
 
 use Brownie::Driver;
 use Brownie::Node;
@@ -13,32 +15,89 @@ use Brownie::XPath;
 sub new {
     my ($class, %args) = @_;
 
-    my $driver_opts = delete $args{driver};
-    $driver_opts ||= +{ name => 'Mechanize' };
-    unless (ref $driver_opts) {
-        $driver_opts = +{ name => $driver_opts };
+    my $self = +{
+        scopes   => [],
+        driver   => $class->_create_driver($args{driver}),
+        app_host => $args{app_host},
+    };
+
+    if ($args{app}) {
+        my $server = $class->_create_server($args{app});
+        if ($server) {
+            $self->{server}   = $server;
+            $self->{app_host} = 'http://localhost:' . $server->port;
+        }
     }
 
-    $driver_opts->{class} ||= 'Brownie::Driver::' . $driver_opts->{name};
-    $driver_opts->{args}  ||= {};
-
-    Class::Load::load_class($driver_opts->{class});
-    my $driver = $driver_opts->{class}->new(%{ $driver_opts->{args} });
-
-    return bless { %args, scopes => [], driver => $driver }, $class;
+    return bless $self => $class;
 }
 
 sub DESTROY {
     my $self = shift;
-    delete $self->{driver};
+    for my $key qw(/driver server/) {
+        delete $self->{$key}
+    }
 }
 
-sub driver { shift->{driver} }
-for my $method (Brownie::Driver->PROVIDED_METHODS) {
+sub _create_driver {
+    my ($class, $opts) = @_;
+
+    $opts ||= { name => 'Mechanize' };
+    $opts = { name => $opts } unless ref $opts;
+
+    my $klass = $opts->{class} || 'Brownie::Driver::' . $opts->{name};
+    Class::Load::load_class($klass);
+
+    return $klass->new(%{ $opts->{args} || {} });
+}
+
+sub _create_server {
+    my ($class, $app, %args) = @_;
+    return unless $app;
+
+    my $server = Test::TCP->new(
+        code => sub {
+            my $port = shift;
+
+            my $r = Plack::Runner->new(app => $app);
+            $r->parse_options('--port' => $port, '--env' => 'test');
+            $r->set_options(%args);
+            $r->run;
+        },
+    );
+}
+
+sub driver   { shift->{driver} }
+sub server   { shift->{server} }
+sub app_host { shift->{app_host} }
+
+for my $method (qw/
+    current_url
+    current_path
+    status_code
+    response_headers
+    title
+    source
+    screenshot
+    execute_script
+    evaluate_script
+/) {
     Sub::Install::install_sub({
         code => sub { shift->driver->$method(@_) },
         as   => $method,
     });
+}
+
+*body = \&source;
+
+sub visit {
+    my ($self, $url) = @_;
+
+    if ($self->app_host && $url !~ /^http/) {
+        $url = $self->app_host . $url;
+    }
+
+    $self->driver->visit($url);
 }
 
 sub current_node {

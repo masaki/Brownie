@@ -11,24 +11,25 @@ sub new {
     return bless { %args }, $class;
 }
 
-our @Navigation = qw(visit current_url current_path);
-our @Headers    = qw(status_code response_headers);
-our @Pages      = qw(title source screenshot);
-our @Scripting  = qw(execute_script evaluate_script);
-
-sub PROVIDED_METHODS {
-    return (@Navigation, @Headers, @Pages, @Scripting);
-}
-
-sub DRIVER_METHODS {
-    return qw(browser find all);
-}
-
-for (DRIVER_METHODS, PROVIDED_METHODS) {
-    next if __PACKAGE__->can($_);
+for my $method (qw/
+    browser
+    find
+    all
+    visit
+    current_url
+    current_path
+    status_code
+    response_headers
+    title
+    source
+    screenshot
+    execute_script
+    evaluate_script
+/) {
+    next if __PACKAGE__->can($method);
     Sub::Install::install_sub({
         code => Brownie->can('not_implemented'),
-        as   => $_,
+        as   => $method,
     });
 }
 
