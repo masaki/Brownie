@@ -197,8 +197,8 @@ Brownie::Session - browser session class
 
   # external server
   my $session = Brownie::Session->new(
-      driver => 'Mechanize',
-      host   => 'http://app.example.com:5000',
+      driver   => 'Mechanize',
+      app_host => 'http://app.example.com:5000',
   );
 
   # PSGI app

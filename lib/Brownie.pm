@@ -24,8 +24,8 @@ Brownie - Browser integration framework inspired by Capybara
 
   # external server
   my $session = Brownie::Session->new(
-      driver => 'Mechanize',
-      host   => 'http://app.example.com:5000',
+      driver   => 'Mechanize',
+      app_host => 'http://app.example.com:5000',
   );
 
   # PSGI app
