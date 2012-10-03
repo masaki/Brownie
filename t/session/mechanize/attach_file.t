@@ -1,12 +1,11 @@
 use strict;
 use warnings;
 use Test::More;
-use t::Utils;
+use Brownie::Session;
 use File::Spec;
 
-my $bs = create_session_for('Mechanize');
-
-my $httpd = run_httpd_with(<<__HTTPD__);
+my $app = sub {
+    my $body = <<__HTTPD__;
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
@@ -28,17 +27,21 @@ my $httpd = run_httpd_with(<<__HTTPD__);
 </html>
 __HTTPD__
 
-my $base_url = $httpd->endpoint;
-my $file_path = File::Spec->rel2abs($0);
+    [ 200, [ 'Content-Type' => 'text/html;charset=utf-8' ], [$body] ];
+};
+
+my $bs = Brownie::Session->new(driver => 'Mechanize', app => $app);
 
 subtest 'attach_file' => sub {
+    my $file_path = File::Spec->rel2abs($0);
+
     for (
         ['file1',       'file1'],
         ['File1 Label', 'file1'],
         ['File2 Label', 'file2'],
     ) {
         my ($locator, $id) = @$_;
-        $bs->visit($base_url);
+        $bs->visit('/');
 
         ok $bs->attach_file($locator, $file_path);
         # XXX: should check whether file is uploaded

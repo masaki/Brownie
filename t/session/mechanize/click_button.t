@@ -1,11 +1,10 @@
 use strict;
 use warnings;
 use Test::More;
-use t::Utils;
+use Brownie::Session;
 
-my $bs = create_session_for('Mechanize');
-
-my $httpd = run_httpd_with(<<__HTTPD__);
+my $app = sub {
+    my $body = <<__HTTPD__;
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
@@ -23,7 +22,10 @@ my $httpd = run_httpd_with(<<__HTTPD__);
 </html>
 __HTTPD__
 
-my $base_url = $httpd->endpoint;
+    [ 200, [ 'Content-Type' => 'text/html;charset=utf-8' ], [$body] ];
+};
+
+my $bs = Brownie::Session->new(driver => 'Mechanize', app => $app);
 
 my @buttons = (
     'input_submit',
@@ -37,23 +39,21 @@ my @buttons = (
 
 subtest 'click_button' => sub {
     for my $locator (@buttons) {
-        $bs->visit($base_url);
+        $bs->visit('/');
 
-        is $bs->current_url => $base_url;
+        is $bs->current_path => '/';
         ok $bs->click_button($locator);
         is $bs->current_path => '/form';
-        isnt $bs->current_url => $base_url;
     }
 };
 
 subtest 'click_button' => sub {
     for my $locator (@buttons) {
-        $bs->visit($base_url);
+        $bs->visit('/');
 
-        is $bs->current_url => $base_url;
+        is $bs->current_path => '/';
         ok $bs->click_link_or_button($locator);
         is $bs->current_path => '/form';
-        isnt $bs->current_url => $base_url;
     }
 };
 

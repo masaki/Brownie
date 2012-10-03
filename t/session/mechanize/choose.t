@@ -1,11 +1,11 @@
 use strict;
 use warnings;
 use Test::More;
-use t::Utils;
+use Brownie::Session;
+use URI::QueryParam;
 
-my $bs = create_session_for('Mechanize');
-
-my $httpd = run_httpd_with(<<__HTTPD__);
+my $app = sub {
+    my $body = <<__HTTPD__;
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
@@ -36,7 +36,10 @@ my $httpd = run_httpd_with(<<__HTTPD__);
 </html>
 __HTTPD__
 
-my $base_url = $httpd->endpoint;
+    [ 200, [ 'Content-Type' => 'text/html;charset=utf-8' ], [$body] ];
+};
+
+my $bs = Brownie::Session->new(driver => 'Mechanize', app => $app);
 
 subtest 'choose' => sub {
     for (
@@ -47,7 +50,7 @@ subtest 'choose' => sub {
         my ($value, $locators) = @$_;
 
         for my $locator (@$locators) {
-            $bs->visit($base_url);
+            $bs->visit('/');
 
             ok $bs->choose($locator);
             $bs->click_button('submit');

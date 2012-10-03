@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Test::More;
-use t::Utils;
 use Brownie::Driver::Mechanize;
 
 my $driver = Brownie::Driver::Mechanize->new;

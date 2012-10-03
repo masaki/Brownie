@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Test::More;
-use t::Utils;
 use Test::Exception;
 use Brownie::Driver::Mechanize;
 

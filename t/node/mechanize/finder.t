@@ -1,14 +1,14 @@
 use strict;
 use warnings;
 use Test::More;
-use t::Utils;
+use Test::Fake::HTTPD;
 use Test::Exception;
 use Brownie::Driver::Mechanize;
 use Brownie::Node::Mechanize;
 
 my $driver = Brownie::Driver::Mechanize->new;
 
-my $httpd = run_httpd_with(<<__HTTPD__);
+my $body = <<__HTTPD__;
 <html>
   <head><title>test title</title></head>
   <body>
@@ -27,6 +27,9 @@ my $httpd = run_httpd_with(<<__HTTPD__);
   </body>
 </html>
 __HTTPD__
+
+my $httpd = Test::Fake::HTTPD->new(timeout => 30);
+$httpd->run(sub { [ 200, [ 'Content-Type' => 'text/html; charset=utf-8' ], [ $body ] ] });
 
 my $base_url = $httpd->endpoint;
 
