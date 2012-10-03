@@ -7,14 +7,14 @@ use lib "$FindBin::Bin/../lib";
 use Test::More;
 use Brownie::Session;
 
-my $session = Brownie::Session->new(driver_name => 'Selenium');
-$session->visit('http://www.google.com/webhp');
+my $bs = Brownie::Session->new(driver => 'Mechanize', app_host => 'http://www.google.com');
+$bs->visit('/webhp');
 
-like $session->title => qr/Google/;
+like $bs->title => qr/Google/;
 
-$session->fill_in('q' => "Brownie\n"); # enable auto-search
+$bs->fill_in('q' => "Brownie\n"); # enable auto-search
 sleep 3;
 
-like $session->title => qr/Brownie/i;
+like $bs->title => qr/Brownie/i;
 
 done_testing;
