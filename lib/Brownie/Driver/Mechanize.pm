@@ -12,7 +12,7 @@ use Brownie;
 use Brownie::XPath;
 use Brownie::Node::Mechanize;
 
-(our $NodeClass = __PACKAGE__) =~ s/Driver/Node/;
+our $NodeClass = 'Brownie::Node::Mechanize';
 
 sub DESTROY {
     my $self = shift;
