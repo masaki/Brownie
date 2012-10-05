@@ -1,5 +1,10 @@
 Revision history for Perl extension Brownie
 
+0.06
+        - remove Selenium (Remote / Selenium-Server) driver
+        - support Mechanize driver
+        - support local app w/ Plack::Runner
+
 0.05
         - does not call clear() if file attachment field
         - support input[not(@type)] as text field
