@@ -39,13 +39,6 @@ for my $method (qw/
 
 Brownie::Driver - base class of Brownie::Driver series
 
-=head1 SYNOPSIS
-
-  use Brownie::Session;
-
-  my $session = Brownie::Session->new;
-  my $driver = $session->driver;
-
 =head1 METHODS
 
 =over 4
@@ -132,11 +125,11 @@ If specified DOM element, it returns WebElement object.
 
   my $node = $driver->evaluate_script('document.getElementById("foo")');
 
-=item * C<find_element($locator, %args)>
+=item * C<find($locator, %args)>
 
 Find an element on the page, and return L<Brownie::Node> object.
 
-  my $element = $driver->find_element($locator, %args)
+  my $element = $driver->find($locator, %args)
 
 C<$locator> is string of "CSS Selector" (e.g. "#id") or "XPath" (e.g. "//a[1]").
 
@@ -146,16 +139,16 @@ C<%args> are:
 
 =item * C<-base>: Brownie::Node object where you want to start finding
 
-  my $parent = $driver->find_element('#where_to_parent');
-  my $child  = $driver->find_element('a', -base => $parent);
+  my $parent = $driver->find('#where_to_parent');
+  my $child  = $driver->find('a', base => $parent);
 
 =back
 
-=item * C<find_elements($locator, %args)>
+=item * C<all($locator, %args)>
 
 Find all elements on the page, and return L<Brownie::Node> object list.
 
-  my @elements = $driver->find_elements($locator, %args)
+  my @elements = $driver->all($locator, %args)
 
 C<$locator> is string of "CSS Selector" (e.g. "#id") or "XPath" (e.g. "//a[1]").
 
@@ -165,8 +158,8 @@ C<%args> are:
 
 =item * C<-base>: Brownie::Node object where you want to start finding
 
-  my $parent   = $driver->find_element('#where_to_parent');
-  my @children = $driver->find_elements('li', -base => $parent);
+  my $parent   = $driver->find('#where_to_parent');
+  my @children = $driver->all('li', base => $parent);
 
 =back
 
@@ -184,7 +177,5 @@ it under the same terms as Perl itself.
 =head1 SEE ALSO
 
 L<Brownie::Node>, L<Brownie::Session>
-
-L<Brownie::Driver::Selenium>, L<Brownie::Driver::Mechanize>
 
 =cut

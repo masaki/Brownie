@@ -55,13 +55,6 @@ for (@Method) {
 
 Brownie::Node - base class of Brownie::Node series
 
-=head1 SYNOPSIS
-
-  use Brownie::Session;
-  my $session = Brownie::Session->new;
-
-  my $node = $session->find_element('#id');
-
 =head1 METHODS
 
 =over 4
@@ -207,7 +200,5 @@ it under the same terms as Perl itself.
 =head1 SEE ALSO
 
 L<Brownie::Driver>
-
-L<Brownie::Node::Selenium>, L<Brownie::Node::Mechanize>
 
 =cut

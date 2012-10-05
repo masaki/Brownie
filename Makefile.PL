@@ -13,9 +13,9 @@ requires 'HTML::Selector::XPath';
 requires 'Plack::Runner';
 requires 'Test::TCP';
 requires 'WWW::Mechanize';
-requires 'Selenium::Remote::Driver';
-requires 'File::Slurp';
-requires 'MIME::Base64';
+#requires 'Selenium::Remote::Driver';
+#requires 'File::Slurp';
+#requires 'MIME::Base64';
 
 tests 't/*.t';
 test_requires 'Test::More' => 0.98;
@@ -27,6 +27,5 @@ test_requires 'URI::QueryParam';
 
 recursive_author_tests 'xt';
 auto_set_repository;
-readme_pod_from 'lib/Brownie.pm';
 
 WriteAll;
