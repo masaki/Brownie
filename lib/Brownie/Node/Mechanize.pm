@@ -157,6 +157,7 @@ sub select {
         $self->native->attr(selected => 'selected');
     }
     elsif ($self->_is_option) {
+        # TODO: multiple
         my $selector = $self->_find_select_selector;
         if ($selector) {
             $self->_mech->select($selector, $self->value);
@@ -176,8 +177,11 @@ sub unselect {
         $self->native->attr(checked => '');
     }
     elsif ($self->_is_option && $self->_is_in_multiple_select) {
-        $self->_mech->field($self->_mech_selector, undef);
-        $self->native->attr(selected => '');
+        my $selector = $self->_find_select_selector;
+        if ($selector) {
+            $self->_mech->field($selector, undef);
+            $self->native->attr(selected => '');
+        }
     }
     else {
         Carp::carp("This element is not selectable.");

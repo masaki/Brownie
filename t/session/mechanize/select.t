@@ -77,26 +77,26 @@ subtest 'select' => sub {
     };
 };
 
-=comment
+TODO: {
+    local $TODO = 'not implemented collect unselect';
 
-subtest 'unselect' => sub {
-    my @params = (
-        ['select_option5', 'select_option5'],
-        ['5', 'select_option5'],
-        ['o5', 'select_option5'],
-    );
+    subtest 'unselect' => sub {
+        for (
+            'option6',
+            'Option6 Value',
+            'Option6 Text',
+        ) {
+            $bs->visit('/');
 
-    for (@params) {
-        my ($locator, $id) = @$_;
-        $bs->visit($base_url);
+            $bs->select('option5');
+            ok $bs->unselect($_);
+            $bs->click_button('submit');
 
-        my $node = $bs->find_element("#$id");
-        ok $node->is_selected;
-        ok $bs->unselect($locator);
-        ok $node->is_not_selected;
-    }
-};
-
-=cut
+            my @params = $bs->current_url->query_param('multiple');
+            is scalar(@params) => 1;
+            is $params[0] => 'Option5 Value';
+        }
+    };
+}
 
 done_testing;
