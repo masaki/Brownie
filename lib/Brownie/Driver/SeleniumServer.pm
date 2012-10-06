@@ -129,7 +129,7 @@ sub find {
     my $element;
     my $xpath = Brownie::XPath::to_xpath($locator);
 
-    if (my $base = $args{-base}) {
+    if (my $base = $args{base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
         $xpath = ".$xpath" unless $xpath =~ /^\./;
         $element = eval { $self->browser->find_child_element($node, $xpath) }; # abs2rel
@@ -147,7 +147,7 @@ sub all {
     my @elements = ();
     my $xpath = Brownie::XPath::to_xpath($locator);
 
-    if (my $base = $args{-base}) {
+    if (my $base = $args{base}) {
         my $node = (blessed($base) and $base->can('native')) ? $base->native : $base;
         $xpath = ".$xpath" unless $xpath =~ /^\./;
         @elements = eval { $self->browser->find_child_elements($node, $xpath) }; # abs2rel
