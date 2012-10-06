@@ -106,9 +106,12 @@ sub all {
 
 Brownie::Driver::Mechanize - WWW::Mechanize bridge implementation
 
-=head1 DESCRIPTION
+=head1 SYNOPSIS
 
-Please see L<Brownie::Driver> document.
+  my $driver = Brownie::Driver::Mechanize->new;
+
+  $driver->visit($url);
+  my $title = $driver->title;
 
 =head1 METHODS
 
@@ -138,14 +141,6 @@ Please see L<Brownie::Driver> document.
 
 =back
 
-=head2 OVERRIDED
-
-=over 4
-
-=item * C<new>
-
-=back
-
 =head2 NOT SUPPORTED
 
 =over 4
@@ -169,8 +164,6 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Brownie::Driver>, L<Brownie::Node>, L<Brownie::Node::Mechanize>
-
-L<WWW::Mechanize>
+L<Brownie::Driver>, L<WWW::Mechanize>, L<Brownie::Node::Mechanize>
 
 =cut

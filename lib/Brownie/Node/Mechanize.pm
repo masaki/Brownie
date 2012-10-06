@@ -220,19 +220,17 @@ sub click {
 
 Brownie::Node::Mechanize - base class of Brownie::Node series
 
-=head1 DESCRIPTION
-
-Please see L<Brownie::Node> document.
-
 =head1 METHODS
-
-=head2 IMPLEMENTED
 
 =over 4
 
-=item * C<attr>
+=item * C<new(%args)>
 
-=item * C<tag_name>
+=item * C<driver>
+
+=item * C<native>
+
+=item * C<attr($name)>
 
 =item * C<id>
 
@@ -244,11 +242,19 @@ Please see L<Brownie::Node> document.
 
 =item * C<text>
 
+=item * C<tag_name>
+
 =item * C<is_displayed>
 
 =item * C<is_checked>
 
 =item * C<is_selected>
+
+=item * C<is_not_displayed>
+
+=item * C<is_not_checked>
+
+=item * C<is_not_selected>
 
 =item * C<set($value)>
 
@@ -263,24 +269,6 @@ Please see L<Brownie::Node> document.
 =item * C<first($locator)>
 
 =item * C<all($locator)>
-
-=back
-
-=head2 OVERRIDED
-
-=over 4
-
-=item * C<new(%args)>
-
-=item * C<driver>
-
-=item * C<native>
-
-=item * C<is_not_displayed>
-
-=item * C<is_not_checked>
-
-=item * C<is_not_selected>
 
 =back
 
