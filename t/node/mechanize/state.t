@@ -22,7 +22,7 @@ my $body = <<__HTTPD__;
       <input type="checkbox" name="check" id="check1" value="check1" checked="checked"/>
       <input type="checkbox" name="check" id="check2" value="check2"/>
 
-      <input type="radio" name="radio" id="radio1" value="radio1" selected="selected"/>
+      <input type="radio" name="radio" id="radio1" value="radio1" checked="checked"/>
       <input type="radio" name="radio" id="radio2" value="radio2"/>
    </form>
   </body>
@@ -48,10 +48,10 @@ subtest 'State' => sub {
 
     subtest 'selection' => sub {
         ok $doc->find('#check1')->is_checked;
-        ok $doc->find('#radio1')->is_selected;
+        ok $doc->find('#radio1')->is_checked;
 
         ok $doc->find('#check2')->is_not_checked;
-        ok $doc->find('#radio2')->is_not_selected;
+        ok $doc->find('#radio2')->is_not_checked;
     };
 };
 
