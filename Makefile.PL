@@ -13,6 +13,7 @@ requires 'HTML::Selector::XPath';
 requires 'Plack::Runner';
 requires 'Test::TCP';
 requires 'WWW::Mechanize';
+requires 'HTML::TreeBuilder::XPath';
 #requires 'Selenium::Remote::Driver';
 #requires 'File::Slurp';
 #requires 'MIME::Base64';
