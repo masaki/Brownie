@@ -1,5 +1,8 @@
 Revision history for Perl extension Brownie
 
+0.07
+        - added missing dependency
+
 0.06
         - remove Selenium (Remote / Selenium-Server) driver
         - support Mechanize driver

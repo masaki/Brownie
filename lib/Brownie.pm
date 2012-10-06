@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp ();
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub not_implemented { Carp::croak('Not implemented') }
 
