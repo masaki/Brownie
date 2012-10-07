@@ -12,11 +12,15 @@ requires 'URI';
 requires 'HTML::Selector::XPath';
 requires 'Plack::Runner';
 requires 'Test::TCP';
+# Mechanize
 requires 'WWW::Mechanize';
 requires 'HTML::TreeBuilder::XPath';
-#requires 'Selenium::Remote::Driver';
-#requires 'File::Slurp';
-#requires 'MIME::Base64';
+# SeleniumServer
+requires 'Selenium::Remote::Driver';
+requires 'Alien::SeleniumRC';
+requires 'LWP::UserAgent';
+requires 'File::Slurp';
+requires 'MIME::Base64';
 
 tests 't/*.t';
 test_requires 'Test::More' => 0.98;

@@ -3,10 +3,10 @@ use warnings;
 use Test::More;
 use Test::Fake::HTTPD;
 use Test::Exception;
-use Brownie::Driver::Mechanize;
-use Brownie::Node::Mechanize;
+use Brownie::Driver::SeleniumServer;
+use Brownie::Node::SeleniumServer;
 
-my $driver = Brownie::Driver::Mechanize->new;
+my $driver = Brownie::Driver::SeleniumServer->new;
 
 my $body = <<__HTTPD__;
 <html>
