@@ -1,5 +1,9 @@
 Revision history for Perl extension Brownie
 
+0.08
+        - support Selenium RemoteWebDriver (selenium-server) driver
+        - fixed syntax error on Session.pm
+
 0.07
         - added missing dependency
 
