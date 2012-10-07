@@ -34,9 +34,8 @@ sub new {
 
 sub DESTROY {
     my $self = shift;
-    for my $key qw(/driver server/) {
-        delete $self->{$key}
-    }
+    delete $self->{driver} if exists $self->{driver};
+    delete $self->{server} if exists $self->{server};
 }
 
 sub _create_driver {
