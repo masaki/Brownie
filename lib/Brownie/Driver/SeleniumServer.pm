@@ -6,7 +6,7 @@ use parent 'Brownie::Driver';
 use Selenium::Remote::Driver;
 use Alien::SeleniumRC;
 use Test::TCP;
-use LWP::Simple ();
+use LWP::UserAgent;
 use Scalar::Util qw(blessed);
 use URI;
 use File::Slurp qw(write_file);
@@ -60,7 +60,7 @@ sub _shutdown_selenium_server {
     my $self = shift;
 
     if ($self->{server}) {
-        LWP::Simple::get($self->_selenium_shutdown_url);
+        LWP::UserAgent->new->get($self->_selenium_shutdown_url);
         delete $self->{server};
     }
 }
