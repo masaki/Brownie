@@ -18,7 +18,7 @@ sub to_link {
         q!//a[@id='%s']!,
         q!//a[@name='%s']!,
         q!//a[@title='%s']!,
-        q!//a[contains(text(),'%s')]!,
+        q!//a[text()[contains(.,'%s')]]!,
         q!//a//img[@alt='%s']!,
     );
 }
@@ -35,7 +35,7 @@ sub to_button {
         q!//button[@name='%s']!,
         q!//button[@title='%s']!,
         q!//button[@value='%s']!,
-        q!//button[contains(text(),'%s')]!,
+        q!//button[text()[contains(.,'%s')]]!,
     );
 }
 
@@ -45,7 +45,7 @@ sub to_link_or_button {
         q!//a[@id='%s']!,
         q!//a[@name='%s']!,
         q!//a[@title='%s']!,
-        q!//a[contains(text(),'%s')]!,
+        q!//a[text()[contains(.,'%s')]]!,
         q!//a//img[@alt='%s']!,
         q!//input[(@type='submit' or @type='button' or @type='image') and @id='%s']!,
         q!//input[(@type='submit' or @type='button' or @type='image') and @name='%s']!,
@@ -56,7 +56,7 @@ sub to_link_or_button {
         q!//button[@name='%s']!,
         q!//button[@title='%s']!,
         q!//button[@value='%s']!,
-        q!//button[contains(text(),'%s')]!,
+        q!//button[text()[contains(.,'%s')]]!,
     );
 }
 
@@ -67,13 +67,13 @@ sub to_text_field {
         q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @name='%s']!,
         q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @title='%s']!,
         q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @value='%s']!,
-        q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @id=//label[contains(text(),'%s')]/@for]!,
-        q!//label[contains(text(),'%s')]//input[(@type='text' or @type='password' or @type='hidden' or not(@type))]!,
+        q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @id=//label[text()[contains(.,'%s')]]/@for]!,
+        q!//label[text()[contains(.,'%s')]]//input[(@type='text' or @type='password' or @type='hidden' or not(@type))]!,
         q!//textarea[@id='%s']!,
         q!//textarea[@name='%s']!,
         q!//textarea[@title='%s']!,
-        q!//textarea[@id=//label[text()='%s']/@for]!,
-        q!//label[text()='%s']//textarea!,
+        q!//textarea[@id=//label[text()[contains(.,'%s')]]/@for]!,
+        q!//label[text()[contains(.,'%s')]]//textarea!,
     );
 }
 
@@ -84,8 +84,8 @@ sub to_radio {
         q!//input[@type='radio' and @name='%s']!,
         q!//input[@type='radio' and @title='%s']!,
         q!//input[@type='radio' and @value='%s']!,
-        q!//input[@type='radio' and @id=//label[contains(text(),'%s')]/@for]!,
-        q!//label[contains(text(),'%s')]//input[@type='radio']!,
+        q!//input[@type='radio' and @id=//label[text()[contains(.,'%s')]]/@for]!,
+        q!//label[text()[contains(.,'%s')]]//input[@type='radio']!,
     );
 }
 
@@ -96,8 +96,8 @@ sub to_checkbox {
         q!//input[@type='checkbox' and @name='%s']!,
         q!//input[@type='checkbox' and @title='%s']!,
         q!//input[@type='checkbox' and @value='%s']!,
-        q!//input[@type='checkbox' and @id=//label[contains(text(),'%s')]/@for]!,
-        q!//label[contains(text(),'%s')]//input[@type='checkbox']!,
+        q!//input[@type='checkbox' and @id=//label[text()[contains(.,'%s')]]/@for]!,
+        q!//label[text()[contains(.,'%s')]]//input[@type='checkbox']!,
     );
 }
 
@@ -108,7 +108,7 @@ sub to_option {
         q!//option[@name='%s']!,
         q!//option[@title='%s']!,
         q!//option[@value='%s']!,
-        q!//option[contains(text(),'%s')]!,
+        q!//option[text()[contains(.,'%s')]]!,
     );
 }
 
@@ -118,8 +118,8 @@ sub to_file_field {
         q!//input[@type='file' and @id='%s']!,
         q!//input[@type='file' and @name='%s']!,
         q!//input[@type='file' and @title='%s']!,
-        q!//input[@type='file' and @id=//label[contains(text(),'%s')]/@for]!,
-        q!//label[contains(text(),'%s')]//input[@type='file']!,
+        q!//input[@type='file' and @id=//label[text()[contains(.,'%s')]]/@for]!,
+        q!//label[text()[contains(.,'%s')]]//input[@type='file']!,
     );
 }
 
