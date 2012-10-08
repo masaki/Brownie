@@ -17,12 +17,11 @@ requires 'WWW::Mechanize';
 requires 'HTML::TreeBuilder::XPath';
 # SeleniumServer
 requires 'Selenium::Remote::Driver';
-requires 'Alien::SeleniumRC';
-requires 'LWP::UserAgent';
+requires 'Selenium::Server';
 requires 'File::Slurp';
 requires 'MIME::Base64';
 
-tests 't/*.t';
+tests 't/*.t t/*/*.t t/*/mechanize/*.t';
 test_requires 'Test::More' => 0.98;
 test_requires 'Test::UseAllModules';
 test_requires 'Test::Fake::HTTPD' => 0.03;
