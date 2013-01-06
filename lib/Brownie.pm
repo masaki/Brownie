@@ -3,11 +3,44 @@ package Brownie;
 use 5.008001;
 use strict;
 use warnings;
-use Carp ();
+use Brownie::Session;
+use Sub::Install;
 
 our $VERSION = '0.08';
 
-sub not_implemented { Carp::croak('Not implemented') }
+my %container;
+for my $accessor (qw{
+    driver
+    app_host
+    app
+}) {
+    Sub::Install::install_sub({
+        code => sub {
+            my ($class, $args) = @_;
+            return $container{$accessor} unless @_ > 1;
+            $container{$accessor} = $args;
+        },
+        as   => $accessor,
+    });
+}
+
+my %session;
+sub current_session {
+    my $class = shift;
+    # TODO: changable session
+    $session{default} ||= Brownie::Session->new(
+        app      => Brownie->app,
+        app_host => Brownie->app_host,
+        driver   => Brownie->driver,
+    );
+}
+
+sub reset_sessions {
+    my $class = shift;
+    undef %session;
+}
+
+END { __PACKAGE__->reset_sessions }
 
 1;
 
@@ -56,7 +89,33 @@ Brownie - Browser integration framework inspired by Capybara
 
 =head2 DSL-Style
 
-NOT IMPLEMENTED YET
+  use Brownie::DSL;
+
+  # external server
+  Brownie->driver('Mechanize');
+  Brownie->app_host('http://app.example.com:5000');
+
+  # PSGI app
+  Brownie->driver('Mechanize');
+  Brownie->app(sub { ...(PSGI app)... });
+
+  # psgi file
+  Brownie->driver('Mechanize');
+  Brownie->app('app.psgi');
+
+  visit('/');
+  is page->title, 'Some Title';
+
+  fill_in('User Name' => 'brownie');
+  fill_in('Email Address' => 'brownie@example.com');
+  click_button('Login');
+  like page->source => qr/Welcome (.+)/;
+
+  fill_in(q => 'Brownie');
+  lick_link_or_button('Search');
+  like page->title => qr/Search result of Brownie/i;
+
+  done_testing;
 
 =head1 DESCRIPTION
 
