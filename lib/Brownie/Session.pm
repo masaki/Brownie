@@ -240,7 +240,7 @@ C<%args> are:
 
 =item * C<driver>: loadable driver name or config
 
-=item * C<host>: external target application
+=item * C<app_host>: external target application
 
 =item * C<app>: PSGI application
 
