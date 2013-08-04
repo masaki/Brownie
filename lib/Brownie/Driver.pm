@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Sub::Install;
 
-use Brownie;
+use Brownie::Helpers;
 
 sub new {
     my ($class, %args) = @_;
@@ -28,7 +28,7 @@ for my $method (qw/
 /) {
     next if __PACKAGE__->can($method);
     Sub::Install::install_sub({
-        code => Brownie->can('not_implemented'),
+        code => Brownie::Helpers->can('not_implemented'),
         as   => $method,
     });
 }
