@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Sub::Install;
 
-use Brownie;
+use Brownie::Helpers;
 
 sub new {
     my ($class, %args) = @_;
@@ -44,7 +44,7 @@ our @Method = (@Accessor, @Finder, @State, @Action);
 for (@Method) {
     next if __PACKAGE__->can($_);
     Sub::Install::install_sub({
-        code => Brownie->can('not_implemented'),
+        code => Brownie::Helpers->can('not_implemented'),
         as   => $_,
     });
 }

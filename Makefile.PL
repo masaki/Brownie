@@ -25,6 +25,7 @@ tests 't/*.t t/*/*.t t/*/mechanize/*.t';
 test_requires 'Test::More' => 0.98;
 test_requires 'Test::UseAllModules';
 test_requires 'Test::Fake::HTTPD' => 0.03;
+test_requires 'Test::Mock::Guard';
 test_requires 'Test::Exception';
 test_requires 'File::Temp';
 test_requires 'URI::QueryParam';
