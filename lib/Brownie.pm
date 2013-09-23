@@ -6,7 +6,7 @@ use warnings;
 use Brownie::Session;
 use Sub::Install;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 my %container;
 for my $accessor (qw{
