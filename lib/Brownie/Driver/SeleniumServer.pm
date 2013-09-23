@@ -18,17 +18,31 @@ our $NodeClass = 'Brownie::Node::SeleniumServer';
 sub new {
     my ($class, %args) = @_;
 
-    my $server = Selenium::Server->new;
-    if ($server) {
-        $server->start;
-        $args{server}      = $server;
-        $args{server_host} = $server->host;
-        $args{server_port} = $server->port;
+    if ($ENV{SELENIUM_REMOTE_SERVER_HOST} && $ENV{SELENIUM_REMOTE_SERVER_PORT}) {
+       $args{server_host} = $ENV{SELENIUM_REMOTE_SERVER_HOST};
+       $args{server_port} = $ENV{SELENIUM_REMOTE_SERVER_PORT};
+    }
+    else {
+        my $server = $class->_create_selenium_server(%args);
+        if ($server) {
+            $args{server}      = $server;
+            $args{server_host} = $server->host;
+            $args{server_port} = $server->port,
+        }
     }
 
     $args{browser_name} ||= ($ENV{SELENIUM_BROWSER_NAME} || 'firefox');
 
     return $class->SUPER::new(%args);
+}
+
+sub _create_selenium_server {
+    my ($class, %args) = @_;
+
+    my $server = Selenium::Server->new;
+    $server->start if $server;
+
+    $server;
 }
 
 sub DESTROY {
@@ -203,6 +217,12 @@ You can also set selenium-server parameters using C<%ENV>:
 =item * C<response_headers>
 
 =back
+
+=head1 TIPS
+
+=head2 Use external selenium server
+
+If you secify "SELENIUM_REMOTE_SERVER_HOST" and "SELENIUM_REMOTE_SERVER_PORT" enviromnent valiables, Brownie uses its server for selenium server.  By this, you can quicken the execution of your tests.
 
 =head1 AUTHOR
 
