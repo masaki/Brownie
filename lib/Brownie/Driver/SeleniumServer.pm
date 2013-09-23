@@ -23,9 +23,8 @@ sub new {
        $args{server_port} = $ENV{SELENIUM_REMOTE_SERVER_PORT};
     }
     else {
-        my $server = Selenium::Server->new;
+        my $server = $class->_create_selenium_server(%args);
         if ($server) {
-            $server->start;
             $args{server}      = $server;
             $args{server_host} = $server->host;
             $args{server_port} = $server->port,
@@ -35,6 +34,15 @@ sub new {
     $args{browser_name} ||= ($ENV{SELENIUM_BROWSER_NAME} || 'firefox');
 
     return $class->SUPER::new(%args);
+}
+
+sub _create_selenium_server {
+    my ($class, %args) = @_;
+
+    my $server = Selenium::Server->new;
+    $server->start if $server;
+
+    $server;
 }
 
 sub DESTROY {
