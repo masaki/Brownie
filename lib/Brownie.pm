@@ -112,14 +112,14 @@ Brownie - Browser integration framework inspired by Capybara
   like page->source => qr/Welcome (.+)/;
 
   fill_in(q => 'Brownie');
-  lick_link_or_button('Search');
+  click_link_or_button('Search');
   like page->title => qr/Search result of Brownie/i;
 
   done_testing;
 
 =head1 DESCRIPTION
 
-Brownie is browser integrtion framework. It is inspired by Capybara (Ruby).
+Brownie is browser integration framework. It is inspired by Capybara (Ruby).
 
 =head1 VOCABULARY
 
