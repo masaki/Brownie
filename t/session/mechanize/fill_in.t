@@ -27,6 +27,11 @@ my $app = sub {
         <textarea id="textarea1" name="textarea1">Textarea1 Text</textarea>
         <label>Textarea2 Label<textarea id="textarea2" name="textarea2">Textarea2 Text</textarea></label>
       </p>
+      <!-- email -->
+      <p>
+        <label for="email1">Email1 Label</label>
+        <input type="email" id="email1" name="email1" value="Email1 Value" title="Email1 Title"/>
+      </p>
       <!-- password -->
       <p>
         <label for="password1">Password1 Label</label>
@@ -48,6 +53,7 @@ subtest 'fill_in' => sub {
     for my $locator (
         'text1',     'Text1 Label',     'Text1 Title',
         'text2',     'Text2 Label',
+        'email1',    'Email1 Label',    'Email1 Title',
         'password1', 'Password1 Label',
         'textarea1', 'Textarea1 Label',
         'textarea2', 'Textarea2 Label',

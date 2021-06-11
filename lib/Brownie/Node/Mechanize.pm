@@ -35,7 +35,7 @@ sub _find_select_selector {
 sub _is_text_field {
     my $self = shift;
     return 1 if $self->tag_name eq 'textarea';
-    return 1 if $self->tag_name eq 'input' && ($self->type =~ /^(?:text|password|file|hidden)$/i || !$self->type);
+    return 1 if $self->tag_name eq 'input' && ($self->type =~ /^(?:text|password|file|hidden|email)$/i || !$self->type);
     return 0;
 }
 
