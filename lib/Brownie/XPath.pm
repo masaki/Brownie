@@ -63,12 +63,12 @@ sub to_link_or_button {
 sub to_text_field {
     my $locator = shift;
     return join '|', map { sprintf $_, $locator } (
-        q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @id='%s']!,
-        q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @name='%s']!,
-        q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @title='%s']!,
-        q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @value='%s']!,
-        q!//input[(@type='text' or @type='password' or @type='hidden' or not(@type)) and @id=//label[text()[contains(.,'%s')]]/@for]!,
-        q!//label[text()[contains(.,'%s')]]//input[(@type='text' or @type='password' or @type='hidden' or not(@type))]!,
+        q!//input[(@type='text' or @type='password' or @type='hidden' or @type='email' or not(@type)) and @id='%s']!,
+        q!//input[(@type='text' or @type='password' or @type='hidden' or @type='email' or not(@type)) and @name='%s']!,
+        q!//input[(@type='text' or @type='password' or @type='hidden' or @type='email' or not(@type)) and @title='%s']!,
+        q!//input[(@type='text' or @type='password' or @type='hidden' or @type='email' or not(@type)) and @value='%s']!,
+        q!//input[(@type='text' or @type='password' or @type='hidden' or @type='email' or not(@type)) and @id=//label[text()[contains(.,'%s')]]/@for]!,
+        q!//label[text()[contains(.,'%s')]]//input[(@type='text' or @type='password' or @type='hidden' or @type='email' or not(@type))]!,
         q!//textarea[@id='%s']!,
         q!//textarea[@name='%s']!,
         q!//textarea[@title='%s']!,
